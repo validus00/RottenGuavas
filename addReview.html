@@ -1,58 +1,92 @@
 ﻿<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html>
+
 <head>
-    <meta charset="utf-8" />
-    <title>Rotten Guavas</title>
+    <title>Register/Add New User - Rotten Guavas</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
+
 <body>
-    <a href="index.html">Add Game Review - Rotten Guavas</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="index.html">
+            <img src="https://miro.medium.com/max/1200/1*d_2uqzG2HltwtSgndHl4bA.jpeg" width="50" class="d-inline-block align-top">
+            Rotten Guavas
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <!-- ejs component -->
+                <!-- <% if(!currentUser){ %> -->
+                <li class="nav-item active">
+                    <a class="nav-link" href="login.html">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="register.html">Sign Up</a>
+                </li>
+                <!-- ejs component -->
+                <!-- <% } else{ %> -->
+                <li class="nav-item">
+                    <a class="nav-link" href="profile.html"><!-- <%= currentUser.username %> -->User Profile </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Logout</a>
+                </li>
+                <!-- ejs component -->
+                <!-- <% } %> -->
+            </ul>
+        </div>
+    </nav>
 
-    <div class="nav" style="float:right">
-        <a href="signup.html">Sign Up</a>
-        <a href="profile.html">Profile</a>
+    <div class="col-9">
+        <div class="jumbotron">
+            <h1 class="display-4">ADD REVIEW</h1>
+            <hr class="my-4">
+
+            <!-- Add Game Form -->
+            <form action="#" method="POST">
+                <div class="form-group">
+                    <label for="game">Game:</label>
+                    <input type="text" name="game" placeholder="Game" value="Streets of Rage" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="console">Console:</label>
+                    <input type="text" name="console" placeholder="Console" value="PS4" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="rating">Your rating:</label>
+                    <select id="rating" name="rating">
+                        <option value="10">10</option>
+                        <option value="9">9</option>
+                        <option value="8">8</option>
+                        <option value="7">7</option>
+                        <option value="6">6</option>
+                        <option value="5">5</option>
+                        <option value="4">4</option>
+                        <option value="3">3</option>
+                        <option value="2">2</option>
+                        <option value="1">1</option>
+                        <option value="0">0</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="title">Title of your review:</label>
+                    <input type="text" name="title">
+                </div>
+                <div class="form-group">
+                    <label for="summary">Your review:</label>
+                    <textarea class="form-control" rows="5" name="summary"></textarea>
+                </div>
+                <button onclick="location.href='game.html'" type="button" class="btn btn-primary">Cancel</button>
+                <button onclick="location.href='game.html'" type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
     </div>
 
-    <hr />
-
-    <h2>Add new review</h2>
-    <div class="Review" style="margin-top:20px;margin-bottom:30px">
-        <p>
-            Game:
-            <input type="text" value="Streets of Rage" readonly />
-        </p>
-        <p>
-            Console:
-            <input type="text" value="PS4" readonly />
-        </p>
-        <p>
-            Title:
-            <input type="text" />
-        </p>
-        <p>
-            Rating:
-            <select id="rating">
-                <option value="10">10</option>
-                <option value="9">9</option>
-                <option value="8">8</option>
-                <option value="7">7</option>
-                <option value="6">6</option>
-                <option value="5">5</option>
-                <option value="4">4</option>
-                <option value="3">3</option>
-                <option value="2">2</option>
-                <option value="1">1</option>
-                <option value="0">0</option>
-            </select>
-        </p>
-        <p>
-            Content:
-            <div>
-                <textarea name="content" style="width:500px;height:100px"></textarea>
-            </div>
-        </p>
-        <button onclick="location.href='game.html'" type="button">Cancel</button>
-        <button onclick="location.href='game.html'" type="button">Submit</button>
-    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-       J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
 </body>
 </html>

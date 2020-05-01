@@ -1,118 +1,158 @@
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+﻿<!DOCTYPE html>
+<html>
+
 <head>
-    <meta charset="utf-8" />
-    <title>View, Add, and Delete Game Reviews - Rotten Guavas</title>
+    <title>Profile - Rotten Guavas</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
+
 <body>
-    <a href="index.html">Rotten Guavas</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="index.html">
+            <img src="https://miro.medium.com/max/1200/1*d_2uqzG2HltwtSgndHl4bA.jpeg" width="50" class="d-inline-block align-top">
+            Rotten Guavas
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <!-- ejs component -->
+                <!-- <% if(!currentUser){ %> -->
+                <li class="nav-item active">
+                    <a class="nav-link" href="login.html">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="register.html">Sign Up</a>
+                </li>
+                <!-- ejs component -->
+                <!-- <% } else{ %> -->
+                <li class="nav-item">
+                    <a class="nav-link" href="profile.html"><!-- <%= currentUser.username %> -->User Profile </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Logout</a>
+                </li>
+                <!-- ejs component -->
+                <!-- <% } %> -->
+            </ul>
+        </div>
+    </nav>
 
-    <div class="nav" style="float:right">
-        <a href="signup.html">Sign Up</a>
-        <a href="profile.html">Profile</a>
+    <div class="container-fluid">
+        <h1 class="display-4">
+            Streets of Rage 4
+        </h1>
+        <p class="lead">PS4</p>
+
+        <img src="https://static.metacritic.com/images/products/games/0/a37807579dbc6e3f4d3b759a57ca4577-98.jpg" style="width:100px" />
+
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th scope="col" style="width:200px">Fresh or Not?</th>
+                    <th scope="col" style="width:200px">Average Rating</th>
+                    <th scope="col" style="width:200px">Release Date</th>
+                    <th scope="col" style="width:200px">Genres</th>
+                    <th scope="col" style="width:200px">Also On</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <img src="https://miro.medium.com/max/1200/1*d_2uqzG2HltwtSgndHl4bA.jpeg" style="width:50px" />
+                        Fresh!
+                    </td>
+                    <td>9.0</td>
+                    <td>April 30, 2020</td>
+                    <td>Action, RPG, Beat'em up</td>
+                    <td>
+                        <a href="game.html">Switch</a>,
+                        <a href="game.html">Xbox One</a>,
+                        <a href="game.html">PC</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div>
+            <h2>Reviews</h2>
+
+            <table class="table table-sm" style="margin-top:50px">
+                <thead>
+                    <tr>
+                        <th scope="col" style="width:200px">User</th>
+                        <th scope="col" style="width:200px">User Rating</th>
+                        <th scope="col" style="width:200px">Title</th>
+                        <th scope="col" style="width:200px">Review Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Mario64</td>
+                        <td>10</td>
+                        <td>Best game ever!</td>
+                        <td>October 1, 2020</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="form-group">
+                <label for="summary"><strong>Summary:</strong></label>
+                <textarea class="form-control" name="summary" style="background-color:white" readonly>It was such an awesome game! I really enjoyed it from the beginning until the very end. Spoil alert: I did not expect the final boss to be S*****!</textarea>
+            </div>
+
+            <table class="table table-sm" style="margin-top:50px">
+                <thead>
+                    <tr>
+                        <th scope="col" style="width:200px">User</th>
+                        <th scope="col" style="width:200px">User Rating</th>
+                        <th scope="col" style="width:200px">Title</th>
+                        <th scope="col" style="width:200px">Review Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Kevin</td>
+                        <td>8</td>
+                        <td>Not a bad game</td>
+                        <td>October 10, 2015</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="form-group">
+                <label for="summary"><strong>Summary:</strong></label>
+                <textarea class="form-control" name="summary" style="background-color:white" readonly>I had fun! Not the best PS4 game I've played this year, but it was worth the money.</textarea>
+            </div>
+
+            <table class="table table-sm" style="margin-top:50px">
+                <thead>
+                    <tr>
+                        <th scope="col" style="width:200px">User</th>
+                        <th scope="col" style="width:200px">User Rating</th>
+                        <th scope="col" style="width:200px">Title</th>
+                        <th scope="col" style="width:200px">Review Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>April</td>
+                        <td>9</td>
+                        <td>So much action!!</td>
+                        <td>June 8, 2016</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="form-group">
+                <label for="summary"><strong>Summary:</strong></label>
+                <textarea class="form-control" name="summary" style="background-color:white" readonly>Pretty fun action game. One of my favorite in the genre. Would recommend 10/10!</textarea>
+            </div>
+        </div>
     </div>
 
-    <hr />
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-       J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
-    <div class="Games" style="margin-top:20px;margin-bottom:30px">
-        <h2>Streets of Rage 4</h2>
-        <div>
-            <p>
-                <strong>PS4</strong>
-            </p>
-            <p>
-                Release Date: <strong>April 30, 2020</strong>
-            </p>
-            <p>
-                Genres: <strong>Action, RPG, Beat'em up</strong>
-            </p>
-            <p>
-                Also on:
-                <a href="game.html">Switch</a>,
-                <a href="game.html">XBox One</a>,
-                <a href="game.html">PC</a>
-            </p>
-        </div>
-        <div>
-            <img src="https://static.metacritic.com/images/products/games/0/a37807579dbc6e3f4d3b759a57ca4577-98.jpg" style="width:100px" />
-        </div>
-        <div>
-            <img src="https://miro.medium.com/max/1200/1*d_2uqzG2HltwtSgndHl4bA.jpeg" style="width:50px" />
-            <strong>Rated Fresh!</strong>
-        </div>
-        <p>
-            Average Review:
-            <h3>9.0</h3>
-        </p>
-        <p>
-            Summary: <strong>Action, beat 'em up game with RPG elements.</strong>
-        </p>
-        <button onclick="location.href='addReview.html'" type="button">Add Review</button>
-    </div>
-
-    <hr />
-
-    <div class="Reviews" style="margin-top:20px">
-        <h3>Reviews</h3>
-
-        <div class="Review" style="margin-top:20px;margin-bottom:20px">
-            <p>
-                User: <strong>Mario64</strong>
-            </p>
-            <p>
-                Review Date: <strong>October 1, 2010</strong>
-            </p>
-            <p>
-                Rating: <strong>10</strong>
-            </p>
-            <p>
-                Title: <strong>Best game ever!</strong>
-            </p>
-            <p>
-                Summary: <strong>It was such an awesome game! I really enjoyed it from the beginning until the very end. Spoil alert: I did not expect the final boss to be S*****!</strong>
-            </p>
-        </div>
-
-        <hr />
-
-        <div class="Review" style="margin-top:20px;margin-bottom:20px">
-            <p>
-                User: <strong>Kevin</strong>
-            </p>
-            <p>
-                Review Date: <strong>October 10, 2015</strong>
-            </p>
-            <p>
-                Rating: <strong>8</strong>
-            </p>
-            <p>
-                Title: <strong>Not a bad game</strong>
-            </p>
-            <p>
-                Summary: <strong>I had fun! Not the best PS4 game I've played this year, but it was worth the money.</strong>
-            </p>
-        </div>
-
-        <hr />
-
-        <div class="Review" style="margin-top:20px;margin-bottom:20px">
-            <p>
-                User: <strong>April</strong>
-            </p>
-            <p>
-                Review Date: <strong>June 8, 2016</strong>
-            </p>
-            <p>
-                Rating: <strong>9</strong>
-            </p>
-            <p>
-                Title: <strong>So much action!!!</strong>
-            </p>
-            <p>
-                Summary: <strong>Pretty fun action game. One of my favorite in the genre. Would recommend 10/10!</strong>
-            </p>
-        </div>
-
-    </div>
 </body>
 </html>
