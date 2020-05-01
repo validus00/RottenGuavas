@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Rotten Guavas</title>
+</head>
+<body>
+    <a href="index.html">Add Game Review - Rotten Guavas</a>
+
+    <div class="nav" style="float:right">
+        <a href="signup.html">Sign Up</a>
+        <a href="profile.html">Profile</a>
+    </div>
+
+    <hr />
+
+    <h2>Add new review</h2>
+    <div class="Review" style="margin-top:20px;margin-bottom:30px">
+        <p>
+            Game:
+            <input type="text" value="Streets of Rage" readonly />
+        </p>
+        <p>
+            Console:
+            <input type="text" value="PS4" readonly />
+        </p>
+        <p>
+            Title:
+            <input type="text" />
+        </p>
+        <p>
+            Rating:
+            <select id="rating">
+                <option value="10">10</option>
+                <option value="9">9</option>
+                <option value="8">8</option>
+                <option value="7">7</option>
+                <option value="6">6</option>
+                <option value="5">5</option>
+                <option value="4">4</option>
+                <option value="3">3</option>
+                <option value="2">2</option>
+                <option value="1">1</option>
+                <option value="0">0</option>
+            </select>
+        </p>
+        <p>
+            Content:
+            <div>
+                <textarea name="content" style="width:500px;height:100px"></textarea>
+            </div>
+        </p>
+        <button onclick="location.href='game.html'" type="button">Cancel</button>
+        <button type="button">Submit</button>
+    </div>
+
+</body>
+</html>
