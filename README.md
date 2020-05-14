@@ -12,6 +12,7 @@ bash
   - Install required modules
 ```
 npm install
+npm install forever
 ```
   - Create a config.py file by using bash shell to echo the contents of the file into config.py. {your port number} could be any port, 12122 for example. And {api key} is your api key
 ```
@@ -27,12 +28,12 @@ echo -e "PORT = 12122\nAPI_KEY = 'oijweiotjowetoj'" >> config.py
 node main.js {your port number}
 ```
 **3. To run forever**
-  - Run main program in python3
+  - Run Node with forever
 ```
-forever...
+./node_modules/forever/bin/forever start main.js {your port number}
 ```
 **4. To stop your server after running forever**
-  - Find your process ID(s) (find the command that ends with "         " and the command with "        "
+  - Find your process ID(s) (find the command that ends with "/forever/bin/monitor main.js" and the command with "main.js {your port number}"
 ```
 ps aux | grep {your user name}
 ```
