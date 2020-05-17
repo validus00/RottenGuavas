@@ -14,13 +14,11 @@ bash
 npm install
 npm install forever
 ```
-  - Create a config.py file by using bash shell to echo the contents of the file into config.py. {your port number} could be any port, 12122 for example. And {api key} is your api key
+  - Update your credentials in dbcon.js. Enter user, password, database information.
+  
+  - Untrack your changes in dbcon.js so that git will no longer track dbcon.js in commits.
 ```
-echo -e "PORT = {your port number}\nAPI_KEY = '{api key}'" >> config.py
-```
-  - For the above step, for example, if your port number were 12122 and your api key were oijweiotjowetoj, you would type:
-```
-echo -e "PORT = 12122\nAPI_KEY = 'oijweiotjowetoj'" >> config.py
+git update-index --assume-unchanged dbcon.js
 ```
 **2. Run the server**
   - Run Node
