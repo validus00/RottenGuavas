@@ -1,2 +1,122 @@
-<h1>MySQL Results:</h1>
-<p>{{results}}</p>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">
+        <img src="https://image.flaticon.com/icons/svg/2045/2045020.svg" width=50>
+        Rotten Guavas
+    </a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/register">Sign Up</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/profile">User Profile </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-3">
+
+            <!-- Search bar -->
+            <div class="card">
+                <div class="container">
+                    <form class="form-inline my-2 my-lg-0" action="/" method="POST">
+                        <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><i class="fas fa-search" size=2></i></button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Consoles checkboxes form-->
+            <div class="card">
+                <div class="card-header">
+                    Consoles
+                </div>
+                <div class="container">
+                    <form action="/" method="POST">
+                        {{#each consoles}}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="{{console_ID}}" name="console_selection">
+                            <label class="form-check-label" for="{{console_name}}">
+                                {{console_name}}
+                            </label>
+                        </div>
+                        {{/each}}
+                        <div class="form-group">
+                            <input class="form-control" type="text" placeholder="New Console" name="new_console">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Genres checkboxes form-->
+            <div class="card">
+                <div class="card-header">
+                    Genres
+                </div>
+                <div class="container">
+                    <form action="/" method="POST">
+                        {{#each genres}}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="{{genre_ID}}" name="genre_selection">
+                            <label class="form-check-label" for="{{genre_name}}">
+                                {{genre_name}}
+                            </label>
+                        </div>
+                        {{/each}}
+                        <div class="form-group">
+                            <input class="form-control" type="text" placeholder="New Genre" name="new_genre">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Games Section -->
+        <div class="col-9">
+            <div class="jumbotron">
+                <h1 class="display-4">GAMES</h1>
+                <hr class="my-4">
+                {{#each gamesList}}
+                <p class="lead">{{name}}</p>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width:50px"></th>
+                            <th scope="col" style="width:250px">Game Name</th>
+                            <th scope="col" style="width:220px">Game Rating</th>
+                            <th scope="col" style="width:220px">Fresh Or Not?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each games}}
+                        <tr>
+                            <th scope="row">{{inc @index}}</th>
+                            <td><a href="{{str1}}">{{game_name}}</a></td>
+                            <td>{{toFixed rating}}</td>
+                            <td>
+                                <img src="https://image.flaticon.com/icons/svg/2045/2045020.svg" width=25>
+                                Fresh!
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                {{/each}}
+                <a class="btn btn-primary btn-lg" href="addGame.html" role="button">Add Game</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://kit.fontawesome.com/f0798ec3ce.js" crossorigin="anonymous"></script>
