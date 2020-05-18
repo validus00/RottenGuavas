@@ -62,6 +62,11 @@ function getGamesHelper(res, mysql, list, id, name, complete) {
             }
             var object = [];
             object.name = name;
+
+            for (i = 0; i < results.length; i++) {
+                var str1 = "/?console_ID=1&game_ID=1";
+                results[i].str1 = str1;
+            }
             object.games = results;
             list.push(object);
             complete();
@@ -93,15 +98,46 @@ function getGames(res, mysql, context, complete) {
     });
 }
 
+app.put('/login', function (req, res) {
+
+    console.log("running script");
+
+    var sql = "SELECT * FROM Users WHERE user_name = ? and password = ?";
+    var inserts = [req.body.username, req.body.password];
+    sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
+        if (error) {
+            console.log(error)
+            res.write(JSON.stringify(error));
+            res.status(400);
+            res.end();
+        } else {
+            if (results.length == 0) {
+                console.log("failure");
+                res.status(401).end();
+            } else {
+                console.log("success");
+                res.status(202).end();
+            }
+        }
+    })
+});
+
+app.get('/login', function (req, res) {
+    var context = {};
+    context.jsscripts = ["login.js"];
+    res.render('login', context);
+});
+
 app.get('/', function (req, res) {
     var callbackCount = 0;
     var context = {};
+
     getGames(res, mysql, context, complete);
     getGenres(res, mysql, context, complete);
 
     consoles_list = context.consoles;
     console.log(consoles_list);
-    console.log("console:", req.query.console_ID, "game:", req.query.game_ID);
+    console.log("console:", req.params.console_ID, "game:", req.params.game_ID);
 
     var str1 = "/?console_ID=1&game_ID=1"
     context.str1 = str1;
