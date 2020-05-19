@@ -1,14 +1,14 @@
 function login() {
     $.ajax({
-        url: '/login',
-        type: 'PUT',
-        data: $('#login').serialize(),
-        success: function (results) {
-            alert("Logged in.");
-            window.location.replace("/");
+        url: "/loginProcess",
+        type: "PUT",
+        data: $("#login").serialize(),
+        success: function (data, textStatus) {
+            alert(textStatus);
+            window.location.replace("./");
         },
         error: function (results) {
-            alert("Username/password incorrect.");
+            alert(results.statusText);
             window.location.replace("/login");
         }
     })

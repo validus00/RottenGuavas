@@ -21,7 +21,7 @@ var handlebars = require('express-handlebars').create({
 });
 
 app.engine('handlebars', handlebars.engine);
-app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/static', express.static('public'));
 app.set('view engine', 'handlebars');
 app.set('port', process.argv[2]);
@@ -31,7 +31,7 @@ app.use('/people', require('./people.js'));
 app.use('/planets', require('./planets.js'));
 
 function getConsoles(res, mysql, context, complete) {
-    mysql.pool.query("SELECT console_ID, console_name FROM Consoles", function (error, results, fields) {
+    mysql.pool.query("SELECT console_name FROM Consoles", function (error, results, fields) {
         if (error) {
             res.write(JSON.stringify(error));
             res.end();
@@ -52,147 +52,222 @@ function getGenres(res, mysql, context, complete) {
     });
 }
 
-function getGamesHelper(res, mysql, list, id, name, complete) {
-    mysql.pool.query("SELECT Games.game_id, game_name, AVG(rating) AS rating FROM Reviews JOIN Games ON "
-        + "Reviews.game_ID = Games.game_ID WHERE console_ID = " + id + " GROUP BY game_name ORDER BY rating DESC",
-        function (error, results, fields) {
-            if (error) {
-                res.write(JSON.stringify(error));
-                res.end();
-            }
-            var object = [];
-            object.name = name;
+function getGamesHelper(res, mysql, list, name, genresList, searchName, complete) {
+    var sql = "SELECT Consoles.console_ID, console_name, Games.game_ID, game_name, AVG(rating) AS rating FROM Games"
+        + " JOIN Consoles_Games ON Games.game_ID = Consoles_Games.game_ID"
+        + " JOIN Consoles ON Consoles_Games.console_ID = Consoles.console_ID"
+        + " LEFT JOIN Reviews ON Consoles.console_ID = Reviews.console_ID AND Games.game_ID = Reviews.game_ID";
 
-            for (i = 0; i < results.length; i++) {
-                var str1 = "/?console_ID=1&game_ID=1";
-                results[i].str1 = str1;
+    if (searchName) {
+        mysql.pool.query(sql + " WHERE console_name = '" + name + "' AND game_name = ? GROUP BY game_name ORDER BY rating DESC",
+            searchName, helper);
+    } else if (genresList.length > 0) {
+        genreStr = "' AND (genre_ID = ";
+        for (j = 0; j < genresList.length; j++) {
+            genreStr += genresList[j];
+            if (j + 1 < genresList.length) {
+                genreStr += " OR genre_ID = ";
             }
-            object.games = results;
-            list.push(object);
-            complete();
-        });
-}
+        }
+        mysql.pool.query(sql + " JOIN Genres_Games ON Games.game_ID = Genres_Games.game_ID WHERE console_name = '" + name
+            + genreStr + ") GROUP BY game_name ORDER BY rating DESC", helper);
+    } else {
+        mysql.pool.query(sql + " WHERE console_name = '" + name + "' GROUP BY game_name ORDER BY rating DESC", helper);
+    }
 
-function getGames(res, mysql, context, complete) {
-    var callbackCount = 0;
-    mysql.pool.query("SELECT console_ID, console_name FROM Consoles", function (error, results, fields) {
+    function helper(error, results, fields) {
         if (error) {
             res.write(JSON.stringify(error));
             res.end();
         }
-        context.consoles = results;
-
-        var list = [];
-
+        var object = [];
         for (i = 0; i < results.length; i++) {
-            getGamesHelper(res, mysql, list, results[i].console_ID, results[i].console_name, interComplete);
+            //               var str1 = "/?console_ID=1&game_ID=1";
+            var str1 = "<a href='/? console_ID = 1 & game_ID=1'>";
+            results[i].str1 = str1;
+        }
+        object.games = results;
+        object.name = name;
+        list.push(object);
+        complete();
+    }
+}
+
+function getGames(res, mysql, context, complete, gamesList, genresList, searchName) {
+    var callbackCount = 0;
+    genreStr = "";
+    if (genresList.length > 0) {
+        genreStr = " JOIN Consoles_Games ON Consoles.console_ID = Consoles_Games.console_ID"
+            + " JOIN Games ON Consoles_Games.game_ID = Games.game_ID"
+            + " JOIN Genres_Games ON Games.game_ID = Genres_Games.game_ID"
+            + " WHERE (genre_ID = ";
+        for (i = 0; i < genresList.length; i++) {
+            genreStr += genresList[i];
+            if (i + 1 < genresList.length) {
+                genreStr += " OR genre_ID = ";
+            }
+        }
+        genreStr += ") GROUP BY console_name";
+    }
+    if (searchName) {
+        mysql.pool.query("SELECT console_name FROM Consoles JOIN Consoles_Games ON Consoles.console_ID ="
+            + " Consoles_Games.console_ID JOIN Games ON Consoles_Games.game_ID = Games.game_ID WHERE game_name = ?",
+            searchName, helper);
+    } else {
+        mysql.pool.query("SELECT console_name FROM Consoles" + genreStr, helper);
+    }
+
+    function helper(error, results, fields) {
+        var list = [];
+        var resultsList = gamesList;
+        if (error) {
+            res.write(JSON.stringify(error));
+            res.end();
+        }
+        if (!searchName && genresList.length == 0) {
+            context.consoles = results;
+        }
+        if (gamesList.length == 0) {
+            resultsList = results;
+        }
+        if (resultsList.length == 0) {
+            interComplete();
+        }
+        for (i = 0; i < resultsList.length; i++) {
+            if (gamesList.length == 0) {
+                getGamesHelper(res, mysql, list, resultsList[i].console_name, genresList, searchName, interComplete);
+            } else {
+                getGamesHelper(res, mysql, list, resultsList[i], genresList, searchName, interComplete);
+            }
         }
 
         function interComplete() {
             callbackCount++;
-            if (callbackCount >= results.length) {
+            if (callbackCount >= resultsList.length) {
                 context.gamesList = list;
                 complete();
             }
         }
+    }
+}
+
+app.get("/", function (req, res) {
+    var totalCallBack = 2;
+    var callbackCount = 0;
+    var context = {};
+    getGames(res, mysql, context, complete, [], [], null);
+    getGenres(res, mysql, context, complete);
+    consoles_list = context.consoles;
+    var str1 = "/?console_ID=1&game_ID=1"
+    context.str1 = str1;
+    function complete() {
+        callbackCount++;
+        if (callbackCount >= totalCallBack) {
+            res.render("home", context);
+        }
+    }
+});
+
+function addConsole(name, res) {
+    var inserts = [name];
+    mysql.pool.query("INSERT INTO Consoles (console_name) VALUES (?)", inserts, function (error, results, fields) {
+        if (error) {
+            res.write(JSON.stringify(error));
+            res.end();
+        }
+        res.redirect('/');
     });
 }
 
-app.put('/login', function (req, res) {
-
-    console.log("running script");
-
-    var sql = "SELECT * FROM Users WHERE user_name = ? and password = ?";
-    var inserts = [req.body.username, req.body.password];
-    sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
+function addGenre(name, res) {
+    var inserts = [name];
+    mysql.pool.query("INSERT INTO Genres (genre_name) VALUES (?)", inserts, function (error, results, fields) {
         if (error) {
-            console.log(error)
             res.write(JSON.stringify(error));
-            res.status(400);
             res.end();
-        } else {
-            if (results.length == 0) {
-                console.log("failure");
-                res.status(401).end();
+        }
+        res.redirect('/');
+    });
+}
+
+app.post("/", function (req, res) {
+    if (req.body.new_console) {
+        addConsole(req.body.new_console, res);
+    } else if (req.body.new_genre) {
+        addGenre(req.body.new_genre, res);
+    } else {
+        var totalCallBack = 2;
+        var callbackCount = 0;
+        var context = {};
+        var searchName = null;
+        if (req.body.search) {
+            searchName = req.body.search;
+        }
+        var gamesList = [];
+        var genresList = [];
+        if (req.body.console_selection) {
+            if (Array.isArray(req.body.console_selection)) {
+                gamesList = req.body.console_selection;
             } else {
-                console.log("success");
-                res.status(202).end();
+                gamesList.push(req.body.console_selection);
             }
         }
-    })
+        if (req.body.genre_selection) {
+            if (Array.isArray(req.body.genre_selection)) {
+                genresList = req.body.genre_selection;
+            } else {
+                genresList.push(req.body.genre_selection);
+            }
+        }
+        getGames(res, mysql, context, complete, gamesList, genresList, searchName);
+        getGenres(res, mysql, context, complete);
+        if (searchName || genresList.length > 0) {
+            totalCallBack++;
+            getConsoles(res, mysql, context, complete);
+        }
+        function complete() {
+            callbackCount++;
+            if (callbackCount >= totalCallBack) {
+                res.render("home", context);
+            }
+        }
+    }
 });
 
-app.get('/login', function (req, res) {
+app.put("/loginProcess", function (req, res) {
+    var inserts = [req.body.username, req.body.password];
+    mysql.pool.query("SELECT * FROM Users WHERE user_name = ? AND password = ?", inserts,
+        function (error, results, fields) {
+            if (error) {
+                res.write(JSON.stringify(error));
+                res.end();
+            } else {
+                if (results.length == 0) {
+                    res.status(401).end();
+                } else {
+                    res.status(200).end();
+                }
+            }
+        })
+});
+
+app.get("/login", function (req, res) {
     var context = {};
     context.jsscripts = ["login.js"];
-    res.render('login', context);
+    res.render("login", context);
 });
 
-app.get('/', function (req, res) {
-    var callbackCount = 0;
-    var context = {};
-
-    getGames(res, mysql, context, complete);
-    getGenres(res, mysql, context, complete);
-
-    consoles_list = context.consoles;
-    console.log(consoles_list);
-    console.log("console:", req.params.console_ID, "game:", req.params.game_ID);
-
-    var str1 = "/?console_ID=1&game_ID=1"
-    context.str1 = str1;
-
-    function complete() {
-        callbackCount++;
-        if (callbackCount >= 2) {
-            console.log(context.gamesList);
-            res.render('home', context);
-        }
-    }
+app.use(function (req, res) {
+    res.status(404);
+    res.render('404');
 });
 
-app.post('/', function (req, res) {
-    var callbackCount = 0;
-    var context = {};
-    console.log("search was", req.body.search);
-    if (req.body.new_console) {
-        console.log(req.body.new_console);
-    } else {
-        console.log("nope");
-    }
-    if (req.body.console_selection) {
-        console.log(req.body.console_selection);
-        console.log(req.body.console_selection.length);
-        if (req.body.console_selection.length > 1) {
-            console.log("longer than 1");
-            console.log("first element:", req.body.console_selection[1]);
-        } else {
-            console.log("no longer than 1");
-        }
-    } else {
-        console.log("no click");
-    }
-    getGames(res, mysql, context, complete);
-    getGenres(res, mysql, context, complete);
-    function complete() {
-        callbackCount++;
-        if (callbackCount >= 2) {
-            res.render('home', context);
-        }
-    }
+app.use(function (err, req, res, next) {
+    console.error(err.stack);
+    res.status(500);
+    res.render('500');
 });
 
-app.use(function(req,res){
-  res.status(404);
-  res.render('404');
-});
-
-app.use(function(err, req, res, next){
-  console.error(err.stack);
-  res.status(500);
-  res.render('500');
-});
-
-app.listen(app.get('port'), function(){
-  console.log('Express started on http://localhost:' + app.get('port') + '; press Ctrl-C to terminate.');
+app.listen(app.get('port'), function () {
+    console.log('Express started on http://localhost:' + app.get('port') + '; press Ctrl-C to terminate.');
 });
