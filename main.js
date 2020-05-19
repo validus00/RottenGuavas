@@ -94,11 +94,6 @@ function getGamesHelper(res, mysql, list, name, genresList, searchName, complete
             res.end();
         }
         var object = [];
-        for (i = 0; i < results.length; i++) {
-            //               var str1 = "/?console_ID=1&game_ID=1";
-            var str1 = "<a href='/? console_ID = 1 & game_ID=1'>";
-            results[i].str1 = str1;
-        }
         object.games = results;
         object.name = name;
         list.push(object);
@@ -174,8 +169,6 @@ app.get("/", function (req, res) {
     getGames(res, mysql, context, complete, [], [], null);
     getGenres(res, mysql, context, complete);
     consoles_list = context.consoles;
-    var str1 = "/?console_ID=1&game_ID=1"
-    context.str1 = str1;
     function complete() {
         callbackCount++;
         if (callbackCount >= totalCallBack) {
@@ -259,7 +252,7 @@ app.put("/loginProcess", function (req, res) {
         function (error, results, fields) {
             if (error) {
                 res.write(JSON.stringify(error));
-                res.end();
+                res.status(400).end();
             } else {
                 if (results.length == 0) {
                     res.status(401).end();

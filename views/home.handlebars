@@ -105,7 +105,7 @@
                         {{#each games}}
                         <tr>
                             <th scope="row">{{inc @index}}</th>
-                            <td>{{{str1}}}{{game_name}}</a></td>
+                            <td><a href="/games?console_ID={{console_ID}}&game_ID={{game_ID}}">{{game_name}}</a></td>
                             {{#if rating includeZero=true}}
                             <td>{{toFixed rating}}</td>
                             {{else}}
