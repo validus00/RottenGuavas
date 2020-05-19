@@ -4,6 +4,7 @@
 */
 
 var express = require('express');
+var session = require('express-session');
 var mysql = require('./dbcon.js');
 var bodyParser = require('body-parser');
 
@@ -16,6 +17,13 @@ var handlebars = require('express-handlebars').create({
         },
         toFixed: function (number) {
             return number.toFixed(1);
+        },
+        freshOrNot: function (number) {
+            if (number >= 5) {
+                return "<img src='https://image.flaticon.com/icons/svg/2045/2045020.svg' width=25>Fresh!";
+            } else {
+                return "Not!";
+            }
         }
     }
 });
@@ -26,6 +34,11 @@ app.use('/static', express.static('public'));
 app.set('view engine', 'handlebars');
 app.set('port', process.argv[2]);
 app.set('mysql', mysql);
+app.use(session({
+    secret: "ready player one",
+    resave: true,
+    saveUninitialized: true
+}));
 app.use('/people_certs', require('./people_certs.js'));
 app.use('/people', require('./people.js'));
 app.use('/planets', require('./planets.js'));
@@ -155,6 +168,9 @@ app.get("/", function (req, res) {
     var totalCallBack = 2;
     var callbackCount = 0;
     var context = {};
+    if (req.session.loggedin) {
+        context.loggedin = true;
+    }
     getGames(res, mysql, context, complete, [], [], null);
     getGenres(res, mysql, context, complete);
     consoles_list = context.consoles;
@@ -175,7 +191,7 @@ function addConsole(name, res) {
             res.write(JSON.stringify(error));
             res.end();
         }
-        res.redirect('/');
+        res.redirect("/");
     });
 }
 
@@ -186,7 +202,7 @@ function addGenre(name, res) {
             res.write(JSON.stringify(error));
             res.end();
         }
-        res.redirect('/');
+        res.redirect("/");
     });
 }
 
@@ -199,6 +215,9 @@ app.post("/", function (req, res) {
         var totalCallBack = 2;
         var callbackCount = 0;
         var context = {};
+        if (req.session.loggedin) {
+            context.loggedin = true;
+        }
         var searchName = null;
         if (req.body.search) {
             searchName = req.body.search;
@@ -245,6 +264,8 @@ app.put("/loginProcess", function (req, res) {
                 if (results.length == 0) {
                     res.status(401).end();
                 } else {
+                    req.session.loggedin = true;
+                    req.session.user_ID = results[0].user_ID;
                     res.status(200).end();
                 }
             }
@@ -255,6 +276,16 @@ app.get("/login", function (req, res) {
     var context = {};
     context.jsscripts = ["login.js"];
     res.render("login", context);
+});
+
+app.post("/login", function (req, res) {
+    res.redirect("/");
+})
+
+app.get("/logout", function (req, res) {
+    req.session.loggedin = false;
+    req.session.user_ID = null;
+    res.redirect("/");
 });
 
 app.use(function (req, res) {

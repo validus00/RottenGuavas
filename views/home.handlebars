@@ -5,18 +5,21 @@
     </a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
+            {{#if loggedin}}
+            <li class="nav-item">
+                <a class="nav-link" href="/profile">User Profile </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+            {{else}}
             <li class="nav-item active">
                 <a class="nav-link" href="/login">Login</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/register">Sign Up</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/profile">User Profile </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Logout</a>
-            </li>
+            {{/if}}
         </ul>
     </div>
 </nav>
@@ -103,15 +106,16 @@
                         <tr>
                             <th scope="row">{{inc @index}}</th>
                             <td>{{{str1}}}{{game_name}}</a></td>
-                            {{#if rating}}
+                            {{#if rating includeZero=true}}
                             <td>{{toFixed rating}}</td>
                             {{else}}
                             <td>No reviews yet</td>
                             {{/if}}
-                            <td>
-                                <img src="https://image.flaticon.com/icons/svg/2045/2045020.svg" width=25>
-                                Fresh!
-                            </td>
+                            {{#if rating includeZero=true}}
+                            <td>{{{freshOrNot rating}}}</td>
+                            {{else}}
+                            <td></td>
+                            {{/if}}
                         </tr>
                         {{/each}}
                     </tbody>
