@@ -1,0 +1,97 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">
+        <img src="https://image.flaticon.com/icons/svg/2045/2045020.svg" width=50>
+        Rotten Guavas
+    </a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+            {{#if loggedin}}
+            <li class="nav-item">
+                <a class="nav-link" href="/profile">User Profile </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+            {{else}}
+            <li class="nav-item active">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/register">Sign Up</a>
+            </li>
+            {{/if}}
+        </ul>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <h1>
+        Profile
+    </h1>
+    {{#if photo}}
+    <img src="{{photo}}" style="width:100px" />
+    {{else}}
+    Pic not available
+    {{/if}}
+    <form action="/profile" method="POST">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" name="username" placeholder="username" value="{{user_name}}" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" placeholder="password" required>
+        </div>
+        <div class="form-group">
+            <label for="email">E-mail</label>
+            <input type="email" name="email" placeholder="email" value="{{email}}" required>
+        </div>
+        <div class="form-group">
+            <label for="console">Preferred Console</label>
+            <select id="console" name="console">
+                {{#each options}}
+                <option value="{{console_ID}}" {{processOption pref_console_ID console_ID}}>{{console_name}}</option>
+                {{/each}}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="userimage">Profile Image</label>
+            <input type="file" class="form-control-file" name="userimage">
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+
+    <hr class="my-4">
+    <h2>Your Reviews</h2>
+    {{#each reviews}}
+    <div>
+        <table class="table table-sm" style="margin-top:50px">
+            <thead>
+                <tr>
+                    <th scope="col" style="width:200px">Game</th>
+                    <th scope="col" style="width:200px">Console</th>
+                    <th scope="col" style="width:200px">Your Rating</th>
+                    <th scope="col" style="width:200px">Review Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{game_name}}</td>
+                    <td>{{console_name}}</td>
+                    <td>{{rating}}</td>
+                    <td>{{formatDate review_date}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="form-group">
+            <label for="title"><strong>Review Title</strong></label>
+            <input type="text" name="title" placeholder="title" value="{{title}}" readonly />
+        </div>
+        <div class="form-group">
+            <label for="summary"><strong>Summary</strong></label>
+            <textarea class="form-control" name="summary" style="background-color:white;color:black" readonly>{{content}}</textarea>
+        </div>
+        <button onclick="location.href='/deleteReview?review_ID={{review_ID}}'" type="button" class="btn btn-primary">Delete</button>
+    </div>
+    {{/each}}
+</div>

@@ -29,6 +29,11 @@ var handlebars = require('express-handlebars').create({
             if (date) {
                 return date.toString().split(" ").slice(0, 4).join(" ");    // 0-4 = date
             }
+        },
+        processOption: function (pref_console_ID, console_ID) {
+            if (pref_console_ID && console_ID && pref_console_ID == console_ID) {
+                return " selected";
+            }
         }
     }
 });
@@ -44,9 +49,6 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }));
-app.use('/people_certs', require('./people_certs.js'));
-app.use('/people', require('./people.js'));
-app.use('/planets', require('./planets.js'));
 
 function getConsoles(res, mysql, context, complete) {
     mysql.pool.query("SELECT console_ID, console_name FROM Consoles", function (error, results, fields) {
@@ -75,22 +77,22 @@ function getGamesHelper(res, mysql, list, name, genresList, searchName, complete
         + " JOIN Consoles_Games ON Games.game_ID = Consoles_Games.game_ID"
         + " JOIN Consoles ON Consoles_Games.console_ID = Consoles.console_ID"
         + " LEFT JOIN Reviews ON Consoles.console_ID = Reviews.console_ID AND Games.game_ID = Reviews.game_ID";
-
     if (searchName) {
-        mysql.pool.query(sql + " WHERE console_name = '" + name + "' AND game_name = ? GROUP BY game_name ORDER BY rating DESC",
-            searchName, helper);
+        var inserts = [name, searchName];
+        mysql.pool.query(sql + " WHERE console_name = ? AND game_name = ? GROUP BY game_name ORDER BY rating DESC",
+            inserts, helper);
     } else if (genresList.length > 0) {
-        genreStr = "' AND (genre_ID = ";
+        var inserts = [name];
+        genreStr = "  JOIN Genres_Games ON Games.game_ID = Genres_Games.game_ID WHERE console_name = ? AND (genre_ID = ?";
         for (var j = 0; j < genresList.length; j++) {
-            genreStr += genresList[j];
+            inserts.push(genresList[j]);
             if (j + 1 < genresList.length) {
-                genreStr += " OR genre_ID = ";
+                genreStr += " OR genre_ID = ?";
             }
         }
-        mysql.pool.query(sql + " JOIN Genres_Games ON Games.game_ID = Genres_Games.game_ID WHERE console_name = '" + name
-            + genreStr + ") GROUP BY game_name ORDER BY rating DESC", helper);
+        mysql.pool.query(sql + genreStr + ") GROUP BY game_name ORDER BY rating DESC", inserts, helper);
     } else {
-        mysql.pool.query(sql + " WHERE console_name = '" + name + "' GROUP BY game_name ORDER BY rating DESC", helper);
+        mysql.pool.query(sql + " WHERE console_name = ? GROUP BY game_name ORDER BY rating DESC", name, helper);
     }
 
     function helper(error, results, fields) {
@@ -108,16 +110,17 @@ function getGamesHelper(res, mysql, list, name, genresList, searchName, complete
 
 function getGames(res, mysql, context, complete, gamesList, genresList, searchName) {
     var callbackCount = 0;
+    var inserts = [];
     genreStr = "";
     if (genresList.length > 0) {
         genreStr = " JOIN Consoles_Games ON Consoles.console_ID = Consoles_Games.console_ID"
             + " JOIN Games ON Consoles_Games.game_ID = Games.game_ID"
             + " JOIN Genres_Games ON Games.game_ID = Genres_Games.game_ID"
-            + " WHERE (genre_ID = ";
+            + " WHERE (genre_ID = ?";
         for (var i = 0; i < genresList.length; i++) {
-            genreStr += genresList[i];
+            inserts.push(genresList[i]);
             if (i + 1 < genresList.length) {
-                genreStr += " OR genre_ID = ";
+                genreStr += " OR genre_ID = ?";
             }
         }
         genreStr += ") GROUP BY console_name";
@@ -127,7 +130,7 @@ function getGames(res, mysql, context, complete, gamesList, genresList, searchNa
             + " Consoles_Games.console_ID JOIN Games ON Consoles_Games.game_ID = Games.game_ID WHERE game_name = ?",
             searchName, helper);
     } else {
-        mysql.pool.query("SELECT Consoles.console_ID, console_name FROM Consoles" + genreStr, helper);
+        mysql.pool.query("SELECT Consoles.console_ID, console_name FROM Consoles" + genreStr, inserts, helper);
     }
 
     function helper(error, results, fields) {
@@ -196,25 +199,66 @@ app.get("/", function (req, res) {
     }
 });
 
-function addConsole(name, res) {
-    var inserts = [name];
-    mysql.pool.query("INSERT INTO Consoles (console_name) VALUES (?)", inserts, function (error, results, fields) {
+app.post("/profile", function (req, res) {
+    var inserts = [req.body.username, req.session.user_ID];
+    mysql.pool.query("SELECT * FROM Users WHERE user_name = ? AND user_ID != ?", inserts, function (error, results, fields) {
         if (error) {
             res.write(JSON.stringify(error));
             res.end();
         }
-        res.redirect("/");
+        if (results.length == 0) {
+            inserts = [req.body.username, req.body.password, req.body.email, req.body.console, req.body.userimage, req.session.user_ID];
+            mysql.pool.query("UPDATE Users SET user_name = ?, password = ?, email = ?, pref_console_ID = ?, photo = ? WHERE user_ID = ?",
+                inserts, function (error, results, fields) {
+                    if (error) {
+                        res.write(JSON.stringify(error));
+                        res.end();
+                    }
+                    res.redirect("/profile");
+                });
+        } else {
+            res.redirect("/profile");
+        }
+    });
+});
+
+function addConsole(name, res) {
+    mysql.pool.query("SELECT * FROM Consoles WHERE console_name = ?", name, function (error, results, fields) {
+        if (error) {
+            res.write(JSON.stringify(error));
+            res.end();
+        }
+        if (results.length == 0) {
+            mysql.pool.query("INSERT INTO Consoles (console_name) VALUES (?)", name, function (error, results, fields) {
+                if (error) {
+                    res.write(JSON.stringify(error));
+                    res.end();
+                }
+                res.redirect("/");
+            });
+        } else {
+            res.redirect("/");
+        }
     });
 }
 
 function addGenre(name, res) {
-    var inserts = [name];
-    mysql.pool.query("INSERT INTO Genres (genre_name) VALUES (?)", inserts, function (error, results, fields) {
+    mysql.pool.query("SELECT * FROM Genres WHERE genre_name = ?", name, function (error, results, fields) {
         if (error) {
             res.write(JSON.stringify(error));
             res.end();
         }
-        res.redirect("/");
+        if (results.length == 0) {
+            mysql.pool.query("INSERT INTO Genres (genre_name) VALUES (?)", name, function (error, results, fields) {
+                if (error) {
+                    res.write(JSON.stringify(error));
+                    res.end();
+                }
+                res.redirect("/");
+            });
+        } else {
+            res.redirect("/");
+        }
     });
 }
 
@@ -266,7 +310,13 @@ app.post("/", function (req, res) {
     }
 });
 
-app.put("/loginProcess", function (req, res) {
+app.get("/login", function (req, res) {
+    var context = {};
+    context.jsscripts = ["login.js"];
+    res.render("login", context);
+});
+
+app.post("/login", function (req, res) {
     var inserts = [req.body.username, req.body.password];
     mysql.pool.query("SELECT * FROM Users WHERE user_name = ? AND password = ?", inserts,
         function (error, results, fields) {
@@ -285,16 +335,6 @@ app.put("/loginProcess", function (req, res) {
         })
 });
 
-app.get("/login", function (req, res) {
-    var context = {};
-    context.jsscripts = ["login.js"];
-    res.render("login", context);
-});
-
-app.post("/login", function (req, res) {
-    res.redirect("/");
-})
-
 app.get("/logout", function (req, res) {
     req.session.loggedin = false;
     req.session.user_ID = null;
@@ -302,11 +342,10 @@ app.get("/logout", function (req, res) {
 });
 
 function getGameConsoles(res, mysql, context, complete, game_ID, console_ID) {
-    var inserts = [game_ID];
     mysql.pool.query("SELECT Consoles.console_ID, console_name FROM Consoles"
         + " JOIN Consoles_Games ON Consoles.console_ID = Consoles_Games.console_ID"
         + " JOIN Games ON Consoles_Games.game_ID = Games.game_ID"
-        + " WHERE Games.game_ID = ?", inserts, function (error, results, fields) {
+        + " WHERE Games.game_ID = ?", game_ID, function (error, results, fields) {
             if (error) {
                 res.write(JSON.stringify(error));
                 res.end();
@@ -341,10 +380,9 @@ function getGameReviews(res, mysql, context, complete, game_ID, console_ID) {
 }
 
 function getGameGenres(res, mysql, context, complete, game_ID) {
-    var inserts = [game_ID];
     mysql.pool.query("SELECT genre_name FROM Genres JOIN Genres_Games ON Genres.genre_ID = Genres_Games.genre_ID"
         + " JOIN Games ON Genres_Games.game_ID = Games.game_ID WHERE Games.game_ID = ?",
-        inserts, function (error, results, fields) {
+        game_ID, function (error, results, fields) {
             if (error) {
                 res.write(JSON.stringify(error));
                 res.end();
@@ -391,16 +429,30 @@ app.get("/addReview", function (req, res) {
         if (req.session.loggedin) {
             context.loggedin = true;
         }
-        context.game_ID = req.query.game_ID;
         context.console_ID = req.query.console_ID;
-        context.game_name = req.query.game_name;
         context.console_name = req.query.console_name;
+        context.game_ID = req.query.game_ID;
+        context.game_name = req.query.game_name;
         res.render("addReview", context);
     } else {
         res.redirect("/login");
     }
 });
 
+app.post("/addReview", function (req, res) {
+    var inserts = [req.body.console_ID, req.body.game_ID, req.body.title, req.body.rating, req.body.content];
+    var date = new Date();
+    inserts.push(date);
+    inserts.push(req.session.user_ID);
+    mysql.pool.query("INSERT INTO Reviews (console_ID, game_ID, title, rating, content, review_date, user_ID) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        inserts, function (error, results, fields) {
+            if (error) {
+                res.write(JSON.stringify(error));
+                res.end();
+            }
+            res.redirect("/games?console_ID=" + req.body.console_ID + "&game_ID=" + req.body.game_ID);
+        })
+});
 
 app.get("/reviewCheck", function (req, res) {
     if (req.session.loggedin) {
@@ -428,6 +480,118 @@ app.get("/games", function (req, res) {
             res.render("games", context);
         }
     }
+});
+
+app.get("/deleteGame", function (req, res) {
+    var inserts = [req.query.console_ID, req.query.game_ID];
+    mysql.pool.query("DELETE FROM Consoles_Games WHERE console_ID = ? AND game_ID = ?",
+        inserts, function (error, results, fields) {
+            if (error) {
+                res.write(JSON.stringify(error));
+                res.end();
+            }
+            res.redirect("/");
+        })
+});
+
+function getUser(req, res, mysql, context, complete) {
+    mysql.pool.query("SELECT * FROM Users WHERE user_ID = ?", req.session.user_ID,
+        function (error, results, fields) {
+            if (error) {
+                res.write(JSON.stringify(error));
+                res.end();
+            }
+            context.user_name = results[0].user_name;
+            context.password = results[0].password;
+            context.email = results[0].email;
+            context.photo = results[0].photo;
+            context.pref_console_ID = results[0].pref_console_ID;
+            complete();
+        });
+}
+
+function getUserReviews(req, res, mysql, context, complete) {
+    mysql.pool.query("SELECT review_ID, game_name, console_name, rating, review_date, title, content FROM Reviews"
+        + " JOIN Games ON Reviews.game_ID = Games.game_ID JOIN Consoles ON Reviews.console_ID = Consoles.console_ID"
+        + " WHERE user_ID = ?", req.session.user_ID, function (error, results, fields) {
+            if (error) {
+                res.write(JSON.stringify(error));
+                res.end();
+            }
+            context.reviews = results;
+            complete();
+        });
+}
+
+app.get("/deleteReview", function (req, res) {
+    if (req.session.loggedin) {
+        var inserts = [req.query.review_ID, req.session.user_ID];
+        mysql.pool.query("DELETE FROM Reviews WHERE review_ID = ? AND user_ID = ?",
+            inserts, function (error, results, fields) {
+                if (error) {
+                    res.write(JSON.stringify(error));
+                    res.end();
+                }
+                res.redirect("/profile");
+            })
+    } else {
+        res.redirect("/login");
+    }
+});
+
+app.get("/profile", function (req, res) {
+    if (req.session.loggedin) {
+        var totalCallBack = 3;
+        var callbackCount = 0;
+        var context = {};
+        context.jsscripts = ["deleteReview.js"];
+        if (req.session.loggedin) {
+            context.loggedin = true;
+        }
+        getUser(req, res, mysql, context, complete);
+        getConsoles(res, mysql, context, complete);
+        getUserReviews(req, res, mysql, context, complete);
+        function complete() {
+            callbackCount++;
+            if (callbackCount >= totalCallBack) {
+                var options = [];
+                var consoleOption = {};
+                consoleOption.console_name = "None";
+                options.push(consoleOption);
+                for (var i = 0; i < context.consoles.length; i++) {
+                    context.consoles[i].pref_console_ID = context.pref_console_ID;
+                    options.push(context.consoles[i]);
+                }
+                context.options = options;
+                res.render("profile", context);
+            }
+        }
+    } else {
+        res.redirect("/login");
+    }
+});
+
+app.post("/profile", function (req, res) {
+    var inserts = [req.body.username, req.session.user_ID];
+    mysql.pool.query("SELECT * FROM Users WHERE user_name = ? AND user_ID != ?", inserts, function (error, results, fields) {
+        if (error) {
+            res.write(JSON.stringify(error));
+            res.end();
+        }
+        if (results.length == 0) {
+            inserts = [req.body.username, req.body.password, req.body.email, req.body.console, req.body.userimage, req.session.user_ID];
+            mysql.pool.query("UPDATE Users SET user_name = ?, password = ?, email = ?, pref_console_ID = ?, photo = ? WHERE user_ID = ?",
+                inserts, function (error, results, fields) {
+                    if (error) {
+                        res.write(JSON.stringify(error));
+                        res.end();
+                    }
+                    res.redirect("/profile");
+                });
+        } else {
+            res.redirect("/profile");
+        }
+    });
 });
 
 app.use(function (req, res) {
