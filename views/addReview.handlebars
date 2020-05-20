@@ -1,0 +1,72 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">
+        <img src="https://image.flaticon.com/icons/svg/2045/2045020.svg" width=50>
+        Rotten Guavas
+    </a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+            {{#if loggedin}}
+            <li class="nav-item">
+                <a class="nav-link" href="/profile">User Profile </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+            {{else}}
+            <li class="nav-item active">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/register">Sign Up</a>
+            </li>
+            {{/if}}
+        </ul>
+    </div>
+</nav>
+
+<div class="col-9">
+    <div class="jumbotron">
+        <h1 class="display-4">ADD REVIEW</h1>
+        <hr class="my-4">
+
+        <!-- Add Game Form -->
+        <form action="/addReview" method="POST">
+            <input type="hidden" name="game_ID" placeholder="Game ID" value="{{game_ID}}">
+            <input type="hidden" name="console_ID" placeholder="Console ID" value="{{console_ID}}">
+            <div class="form-group">
+                <label for="game">Game</label>
+                <input type="text" name="game" placeholder="Game" value="{{game_name}}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="console">Console</label>
+                <input type="text" name="console" placeholder="Console" value="{{console_name}}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="rating">Your rating</label>
+                <select id="rating" name="rating">
+                    <option value="10">10</option>
+                    <option value="9">9</option>
+                    <option value="8">8</option>
+                    <option value="7">7</option>
+                    <option value="6">6</option>
+                    <option value="5">5</option>
+                    <option value="4">4</option>
+                    <option value="3">3</option>
+                    <option value="2">2</option>
+                    <option value="1">1</option>
+                    <option value="0">0</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="title">Title of your review</label>
+                <input class="form-control" type="text" name="title">
+            </div>
+            <div class="form-group">
+                <label for="summary">Your review</label>
+                <textarea class="form-control" rows="5" name="summary"></textarea>
+            </div>
+            <button onclick="location.href='/games?console_ID={{console_ID}}&game_ID={{game_ID}}'" type="button" class="btn btn-primary">Cancel</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>

@@ -108,12 +108,9 @@
                             <td><a href="/games?console_ID={{console_ID}}&game_ID={{game_ID}}">{{game_name}}</a></td>
                             {{#if rating includeZero=true}}
                             <td>{{toFixed rating}}</td>
-                            {{else}}
-                            <td>No reviews yet</td>
-                            {{/if}}
-                            {{#if rating includeZero=true}}
                             <td>{{{freshOrNot rating}}}</td>
                             {{else}}
+                            <td>No reviews yet</td>
                             <td></td>
                             {{/if}}
                         </tr>
@@ -121,7 +118,7 @@
                     </tbody>
                 </table>
                 {{/each}}
-                <a class="btn btn-primary btn-lg" href="addGame.html" role="button">Add Game</a>
+                <a class="btn btn-primary btn-lg" href="/addGame" role="button">Add Game</a>
             </div>
         </div>
     </div>

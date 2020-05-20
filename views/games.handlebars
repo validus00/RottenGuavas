@@ -1,0 +1,101 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">
+        <img src="https://image.flaticon.com/icons/svg/2045/2045020.svg" width=50>
+        Rotten Guavas
+    </a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+            {{#if loggedin}}
+            <li class="nav-item">
+                <a class="nav-link" href="/profile">User Profile </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+            {{else}}
+            <li class="nav-item active">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/register">Sign Up</a>
+            </li>
+            {{/if}}
+        </ul>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <h1 class="display-4">
+        {{game_name}}
+    </h1>
+    <p class="lead">{{console_name}}</p>
+    {{#if photo}}
+    <img src="data:image/jpeg;base64,'.base64_encode({{photo}}).'" />
+    {{else}}
+    Pic not available
+    {{/if}}
+
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th scope="col" style="width:200px">Fresh or Not?</th>
+                <th scope="col" style="width:200px">Average Rating</th>
+                <th scope="col" style="width:200px">Release Date</th>
+                <th scope="col" style="width:200px">Genres</th>
+                <th scope="col" style="width:200px">Also On</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                {{#if rating includeZero=true}}
+                <td>{{{freshOrNot rating}}}</td>
+                <td>{{toFixed rating}}</td>
+                {{else}}
+                <td></td>
+                <td>No reviews yet</td>
+                {{/if}}
+                <td>{{formatDate release_date}}</td>
+                <td>{{genresList}}</td>
+                <td>{{{consolesList}}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="form-group">
+        <label for="summary"><strong>Summary</strong></label>
+        <textarea class="form-control" name="summary" style="background-color:white;color:black;height:300px" readonly>{{description}}</textarea>
+    </div>
+    <button onclick="addReview({{game_ID}}, {{console_ID}}, '{{game_name}}', '{{console_name}}')" class="btn btn-primary" type="button">Add Review</button>
+    <button onclick="location.href='/'" class="btn btn-primary" type="button">Delete Game</button>
+
+    <hr class="my-4">
+
+    <div>
+        <h2>Reviews</h2>
+        {{#each reviews}}
+        <table class="table table-sm" style="margin-top:50px">
+            <thead>
+                <tr>
+                    <th scope="col" style="width:150px">User</th>
+                    <th scope="col" style="width:150px">User Rating</th>
+                    <th scope="col" style="width:150px">Review Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{user_name}}</td>
+                    <td>{{toFixed rating}}</td>
+                    <td>{{formatDate review_date}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="form-group">
+            <label for="title"><strong>Review Title</strong></label>
+            <input class="form-control" type="text" name="title" style="background-color:white;color:black" value="{{title}}" readonly />
+        </div>
+        <div class="form-group">
+            <label for="summary"><strong>Summary</strong></label>
+            <textarea class="form-control" name="summary" style="background-color:white;color:black;height:150px" readonly>{{content}}</textarea>
+        </div>
+        {{/each}}
+    </div>
+</div>
