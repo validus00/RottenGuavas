@@ -30,7 +30,7 @@
     </h1>
     <p class="lead">{{console_name}}</p>
     {{#if photo}}
-    <img src="data:image/jpeg;base64,'.base64_encode({{photo}}).'" style="width:50px" />
+    <img src="{{photo}}" style="width:50px" />
     {{else}}
     Pic not available
     {{/if}}

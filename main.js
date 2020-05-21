@@ -199,29 +199,6 @@ app.get("/", function (req, res) {
     }
 });
 
-app.post("/profile", function (req, res) {
-    var inserts = [req.body.username, req.session.user_ID];
-    mysql.pool.query("SELECT * FROM Users WHERE user_name = ? AND user_ID != ?", inserts, function (error, results, fields) {
-        if (error) {
-            res.write(JSON.stringify(error));
-            res.end();
-        }
-        if (results.length == 0) {
-            inserts = [req.body.username, req.body.password, req.body.email, req.body.console, req.body.userimage, req.session.user_ID];
-            mysql.pool.query("UPDATE Users SET user_name = ?, password = ?, email = ?, pref_console_ID = ?, photo = ? WHERE user_ID = ?",
-                inserts, function (error, results, fields) {
-                    if (error) {
-                        res.write(JSON.stringify(error));
-                        res.end();
-                    }
-                    res.redirect("/profile");
-                });
-        } else {
-            res.redirect("/profile");
-        }
-    });
-});
-
 function addConsole(name, res) {
     mysql.pool.query("SELECT * FROM Consoles WHERE console_name = ?", name, function (error, results, fields) {
         if (error) {
@@ -579,7 +556,7 @@ app.post("/profile", function (req, res) {
             res.end();
         }
         if (results.length == 0) {
-            inserts = [req.body.username, req.body.password, req.body.email, req.body.console, req.body.userimage, req.session.user_ID];
+            inserts = [req.body.username, req.body.password, req.body.email, req.body.console, req.body.photo, req.session.user_ID];
             mysql.pool.query("UPDATE Users SET user_name = ?, password = ?, email = ?, pref_console_ID = ?, photo = ? WHERE user_ID = ?",
                 inserts, function (error, results, fields) {
                     if (error) {
