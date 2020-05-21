@@ -1,4 +1,8 @@
 /*
+    Group: Group 11
+    Members: April Castaneda, Kevin Wu
+    Project: Rotten Guavas
+
     Uses express, dbcon for database connection, body parser to parse form data
     handlebars for HTML templates
 */
@@ -11,26 +15,26 @@ var bodyParser = require('body-parser');
 var app = express();
 var handlebars = require('express-handlebars').create({
     defaultLayout: 'main',
-    helpers: {
-        inc: function (number) {
+    helpers: {                                         // helper functions for handlebars
+        inc: function (number) {                       // function to increment number
             return number + 1;
         },
-        toFixed: function (number) {
+        toFixed: function (number) {                   // function to convert num to 1 decimal place
             return number.toFixed(1);
         },
-        freshOrNot: function (number) {
+        freshOrNot: function (number) {         // function to evaluate fresh or not, return field for page
             if (number >= 5) {
                 return "<img src='https://image.flaticon.com/icons/svg/2045/2045020.svg' width=25>Fresh!";
             } else {
                 return "Not!";
             }
         },
-        formatDate: function (date) {
+        formatDate: function (date) {                  // function to splice out time from date
             if (date) {
                 return date.toString().split(" ").slice(0, 4).join(" ");    // 0-4 = date
             }
         },
-        processOption: function (pref_console_ID, console_ID) {
+        processOption: function (pref_console_ID, console_ID) { // for combobox option
             if (pref_console_ID && console_ID && pref_console_ID == console_ID) {
                 return " selected";
             }
@@ -51,7 +55,7 @@ app.use(session({
 }));
 
 function getConsoles(res, mysql, context, complete) {
-    mysql.pool.query("SELECT console_ID, console_name FROM Consoles", function (error, results, fields) {
+    mysql.pool.query("SELECT console_ID, console_name FROM Consoles ORDER BY console_ID", function (error, results, fields) {
         if (error) {
             res.write(JSON.stringify(error));
             res.end();
@@ -130,7 +134,7 @@ function getGames(res, mysql, context, complete, gamesList, genresList, searchNa
             + " Consoles_Games.console_ID JOIN Games ON Consoles_Games.game_ID = Games.game_ID WHERE game_name = ?",
             searchName, helper);
     } else {
-        mysql.pool.query("SELECT Consoles.console_ID, console_name FROM Consoles" + genreStr, inserts, helper);
+        mysql.pool.query("SELECT Consoles.console_ID, console_name FROM Consoles" + genreStr + " ORDER BY console_ID", inserts, helper);
     }
 
     function helper(error, results, fields) {
@@ -190,6 +194,7 @@ app.get("/", function (req, res) {
     }
     getGames(res, mysql, context, complete, [], [], null);
     getGenres(res, mysql, context, complete);
+
     function complete() {
         callbackCount++;
         if (callbackCount >= totalCallBack) {
@@ -277,6 +282,7 @@ app.post("/", function (req, res) {
             totalCallBack++;
             getConsoles(res, mysql, context, complete);
         }
+
         function complete() {
             callbackCount++;
             if (callbackCount >= totalCallBack) {
@@ -522,13 +528,14 @@ app.get("/profile", function (req, res) {
         var totalCallBack = 3;
         var callbackCount = 0;
         var context = {};
-        context.jsscripts = ["deleteReview.js", "updateProfile.js"];
+        context.jsscripts = ["updateProfile.js"];
         if (req.session.loggedin) {
             context.loggedin = true;
         }
         getUser(req, res, mysql, context, complete);
         getConsoles(res, mysql, context, complete);
         getUserReviews(req, res, mysql, context, complete);
+
         function complete() {
             callbackCount++;
             if (callbackCount >= totalCallBack) {
@@ -557,6 +564,9 @@ app.post("/profile", function (req, res) {
             res.end();
         }
         if (results.length == 0) {
+            if (req.body.console == "") {
+                req.body.console = null;
+            }
             inserts = [req.body.username, req.body.password, req.body.email, req.body.console, req.body.photo, req.session.user_ID];
             mysql.pool.query("UPDATE Users SET user_name = ?, password = ?, email = ?, pref_console_ID = ?, photo = ? WHERE user_ID = ?",
                 inserts, function (error, results, fields) {
