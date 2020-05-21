@@ -112,7 +112,7 @@ function getGamesHelper(res, mysql, list, name, genresList, searchName, complete
     }
 }
 
-function getGames(res, mysql, context, complete, gamesList, genresList, searchName) {
+function getGames(res, mysql, context, complete, consolesList, genresList, searchName) {
     var callbackCount = 0;
     var inserts = [];
     genreStr = "";
@@ -139,7 +139,7 @@ function getGames(res, mysql, context, complete, gamesList, genresList, searchNa
 
     function helper(error, results, fields) {
         var list = [];
-        var resultsList = gamesList;
+        var resultsList = consolesList;
         if (error) {
             res.write(JSON.stringify(error));
             res.end();
@@ -147,14 +147,14 @@ function getGames(res, mysql, context, complete, gamesList, genresList, searchNa
         if (!searchName && genresList.length == 0) {
             context.consoles = results;
         }
-        if (gamesList.length == 0) {
+        if (consolesList.length == 0) {
             resultsList = results;
         }
         if (resultsList.length == 0) {
             interComplete();
         }
         for (var i = 0; i < resultsList.length; i++) {
-            if (gamesList.length == 0) {
+            if (consolesList.length == 0) {
                 getGamesHelper(res, mysql, list, resultsList[i].console_name, genresList, searchName, interComplete);
             } else {
                 getGamesHelper(res, mysql, list, resultsList[i], genresList, searchName, interComplete);
@@ -260,13 +260,13 @@ app.post("/", function (req, res) {
         if (req.body.search) {
             searchName = req.body.search;
         }
-        var gamesList = [];
+        var consolesList = [];
         var genresList = [];
         if (req.body.console_selection) {
             if (Array.isArray(req.body.console_selection)) {
-                gamesList = req.body.console_selection;
+                consolesList = req.body.console_selection;
             } else {
-                gamesList.push(req.body.console_selection);
+                consolesList.push(req.body.console_selection);
             }
         }
         if (req.body.genre_selection) {
@@ -276,7 +276,7 @@ app.post("/", function (req, res) {
                 genresList.push(req.body.genre_selection);
             }
         }
-        getGames(res, mysql, context, complete, gamesList, genresList, searchName);
+        getGames(res, mysql, context, complete, consolesList, genresList, searchName);
         getGenres(res, mysql, context, complete);
         if (searchName || genresList.length > 0) {
             totalCallBack++;
