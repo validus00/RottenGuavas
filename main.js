@@ -403,6 +403,7 @@ function getGameInfo(res, mysql, context, complete, game_ID, console_ID) {
 app.get("/addReview", function (req, res) {
     if (req.session.loggedin) {
         var context = {};
+        context.jsscripts = ["addReview.js"];
         if (req.session.loggedin) {
             context.loggedin = true;
         }
@@ -425,9 +426,9 @@ app.post("/addReview", function (req, res) {
         inserts, function (error, results, fields) {
             if (error) {
                 res.write(JSON.stringify(error));
-                res.end();
+                res.status(400).end();
             }
-            res.redirect("/games?console_ID=" + req.body.console_ID + "&game_ID=" + req.body.game_ID);
+            res.status(200).end();
         })
 });
 
@@ -443,7 +444,7 @@ app.get("/games", function (req, res) {
     var totalCallBack = 4;
     var callbackCount = 0;
     var context = {};
-    context.jsscripts = ["addReview.js"];
+    context.jsscripts = ["reviewCheck.js"];
     if (req.session.loggedin) {
         context.loggedin = true;
     }
@@ -521,7 +522,7 @@ app.get("/profile", function (req, res) {
         var totalCallBack = 3;
         var callbackCount = 0;
         var context = {};
-        context.jsscripts = ["deleteReview.js"];
+        context.jsscripts = ["deleteReview.js", "updateProfile.js"];
         if (req.session.loggedin) {
             context.loggedin = true;
         }
@@ -563,10 +564,10 @@ app.post("/profile", function (req, res) {
                         res.write(JSON.stringify(error));
                         res.end();
                     }
-                    res.redirect("/profile");
+                    res.status(200).end();
                 });
         } else {
-            res.redirect("/profile");
+            res.status(400).end();
         }
     });
 });

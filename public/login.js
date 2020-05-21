@@ -11,7 +11,6 @@ $(document).ready(function () {
             },
             error: function (results) {
                 alert(results.statusText);
-                window.location.replace("/login");
             }
         });
         return;
