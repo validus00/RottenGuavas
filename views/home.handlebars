@@ -90,8 +90,10 @@
             <div class="jumbotron">
                 <h1 class="display-4">GAMES</h1>
                 <hr class="my-4">
+                {{#if gamesList}}
                 {{#each gamesList}}
                 <p class="lead">{{name}}</p>
+                {{#if games}}
                 <table class="table table-sm">
                     <thead>
                         <tr>
@@ -117,7 +119,14 @@
                         {{/each}}
                     </tbody>
                 </table>
+                {{else}}
+                No games yet
+                <p></p>
+                {{/if}}
                 {{/each}}
+                {{else}}
+                <p>No results</p>
+                {{/if}}
                 <a class="btn btn-primary btn-lg" href="/addGame" role="button">Add Game</a>
             </div>
         </div>

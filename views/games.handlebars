@@ -71,6 +71,7 @@
 
     <div>
         <h2>Reviews</h2>
+        {{#if reviews}}
         {{#each reviews}}
         <table class="table table-sm" style="margin-top:50px">
             <thead>
@@ -97,5 +98,8 @@
             <textarea class="form-control" name="summary" style="background-color:white;color:black;height:150px" readonly>{{content}}</textarea>
         </div>
         {{/each}}
+        {{else}}
+        No reviews yet
+        {{/if}}
     </div>
 </div>

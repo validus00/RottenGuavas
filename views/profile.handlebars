@@ -63,6 +63,7 @@
 
     <hr class="my-4">
     <h2>Your Reviews</h2>
+    {{#if reviews}}
     {{#each reviews}}
     <div>
         <table class="table table-sm" style="margin-top:50px">
@@ -94,4 +95,7 @@
         <button onclick="location.href='/deleteReview?review_ID={{review_ID}}'" type="button" class="btn btn-primary">Delete</button>
     </div>
     {{/each}}
+    {{else}}
+    No reviews yet
+    {{/if}}
 </div>
