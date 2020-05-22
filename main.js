@@ -683,11 +683,11 @@ function addConsolesGames(res, mysql, context, totalConsoles, totalGenres, game_
             console.log(inserts[0]);
             // Relationship doesn't exist so insert Consoles_Games relationship
             if(results.length == 0){
-                res.statusMessage += "Game '" + game_name + "' for Console: " + inserts[0] + " added." + "\\n";
+                // res.statusMessage += "Game '" + game_name + "' for Console: " + inserts[0] + " added." + "\\n";
                 addRelationship(inserts);
             }
             else{
-                res.statusMessage += "Game '" + game_name + "' for Console: " + inserts[0] + " already exists." + "\\n";
+                // res.statusMessage += "Game '" + game_name + "' for Console: " + inserts[0] + " already exists." + "\\n";
                 addRelationship([]);
             }
         });
@@ -729,11 +729,11 @@ function addGenresGames(res, mysql, context, totalGenres, game_name, complete){
 
             // Relationship doesn't exist so insert Consoles_Games relationship
             if(results.length == 0){
-                res.statusMessage += "Game '" + game_name + "' for Genre: " + inserts[0] + " added." + "\\n";
+                // res.statusMessage += "Game '" + game_name + "' for Genre: " + inserts[0] + " added." + "\\n";
                 addRelationship(inserts);
             }
             else{
-                res.statusMessage += "Game '" + game_name + "' for Console: " + inserts[0] + " already exists." + "\\n";
+                // res.statusMessage += "Game '" + game_name + "' for Console: " + inserts[0] + " already exists." + "\\n";
                 addRelationship([]);
             }
         });
@@ -861,7 +861,7 @@ app.post("/addGame", function (req, res) {
     function addGGComplete(res, game_name){
         thirdCBCount++;
         if(thirdCBCount >= totalGenres){
-            res.statusMessage += "Im done";
+            // res.statusMessage += "Im done";
             res.status(200).end();
         }
     }
