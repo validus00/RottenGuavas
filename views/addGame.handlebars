@@ -1,0 +1,92 @@
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+    <!-- NAVBAR - Website Brand -->
+    <a class="navbar-brand" href="/">
+        <img src="https://image.flaticon.com/icons/svg/2045/2045020.svg" width=50>
+        Rotten Guavas
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        <!-- NAVBAR - Options -->
+        <ul class="navbar-nav ml-auto">
+            {{#if loggedin}}
+            <li class="nav-item">
+                <a class="nav-link" href="/profile">User Profile </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+            {{else}}
+            <li class="nav-item active">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/register">Sign Up</a>
+            </li>
+            {{/if}}
+        </ul>
+    </div>
+</nav>
+
+<!-- WEBPAGE BODY -->
+<div class="container">
+
+    <!-- Add Game Section -->
+    <div class="jumbotron">
+        <h1 class="display-4">ADD GAME</h1>
+        <hr class="my-4">
+
+        <!-- Add Game Form -->
+        <form id="addGame" action="/addGame" method="POST">
+            <div class="form-group">
+                <label for="game_name">Game Name:</label>
+                <input type="text" name="game_name" placeholder="Game Name" required>
+            </div>
+            <div class="form-group">
+                <label for="release_date">Release Date:</label>
+                <input type="date" name="release_date" required>
+            </div>
+
+            <!-- Consoles checkboxes form-->
+            <div class="form-group">
+                <label for="console_name">Console(s):</label>
+                {{#each consoles}}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="{{console_ID}}" name="console_selection">
+                        <label class="form-check-label" for="{{console_name}}">
+                            {{console_name}}
+                        </label>
+                    </div>
+                {{/each}}
+            </div>
+
+            <!-- Genres checkboxes form-->
+            <div class="form-group">
+                <label for="genre_name">Genre(s):</label>
+                {{#each genres}}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="{{genre_ID}}" name="genre_selection">
+                        <label class="form-check-label" for="{{genre_name}}">
+                            {{genre_name}}
+                        </label>
+                    </div>
+                {{/each}}
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea class="form-control" rows="5" name="description"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="photo">Game Image (url):</label>
+                <input type="text" name="photo" placeholder="photo" value="{{photo}}">
+            </div>      
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
