@@ -394,15 +394,19 @@ function getGameInfo(res, mysql, context, complete, game_ID, console_ID) {
                 res.write(JSON.stringify(error));
                 res.end();
             }
-            context.console_ID = console_ID;
-            context.console_name = results[0].console_name;
-            context.photo = results[0].photo;
-            context.game_ID = results[0].game_ID;
-            context.game_name = results[0].game_name;
-            context.rating = results[0].rating;
-            context.release_date = results[0].release_date;
-            context.description = results[0].description;
-            complete();
+            if (results.length == 0) {
+                res.redirect("/");
+            } else {
+                context.console_ID = console_ID;
+                context.console_name = results[0].console_name;
+                context.photo = results[0].photo;
+                context.game_ID = results[0].game_ID;
+                context.game_name = results[0].game_name;
+                context.rating = results[0].rating;
+                context.release_date = results[0].release_date;
+                context.description = results[0].description;
+                complete();
+            }
         });
 }
 
@@ -486,12 +490,16 @@ function getUser(req, res, mysql, context, complete) {
                 res.write(JSON.stringify(error));
                 res.end();
             }
-            context.user_name = results[0].user_name;
-            context.password = results[0].password;
-            context.email = results[0].email;
-            context.photo = results[0].photo;
-            context.pref_console_ID = results[0].pref_console_ID;
-            complete();
+            if (results.length == 0) {
+                res.redirect("/");
+            } else {
+                context.user_name = results[0].user_name;
+                context.password = results[0].password;
+                context.email = results[0].email;
+                context.photo = results[0].photo;
+                context.pref_console_ID = results[0].pref_console_ID;
+                complete();
+            }
         });
 }
 
@@ -530,9 +538,7 @@ app.get("/profile", function (req, res) {
         var callbackCount = 0;
         var context = {};
         context.jsscripts = ["profile.js"];
-        if (req.session.loggedin) {
-            context.loggedin = true;
-        }
+        context.loggedin = true;
         getUser(req, res, mysql, context, complete);
         getConsoles(res, mysql, context, complete);
         getUserReviews(req, res, mysql, context, complete);
@@ -663,7 +669,7 @@ app.get("/addGame", function(req, res){
 
 function getGameID(req, res, mysql, context, game_name, complete) {
     mysql.pool.query("SELECT game_ID FROM Games WHERE game_name = ?", game_name, function (error, results, fields) {
-        if (error) {
+        if (error || results.length == 0) {
             res.statusMessage = JSON.stringify(error);
             res.status(400).end();
         } else {
@@ -697,7 +703,7 @@ function addConsolesGames(res, mysql, context, totalConsoles, totalGenres, game_
             else if(results.length == 0){
                 // Get console_name
                 mysql.pool.query("SELECT console_name FROM Consoles where console_ID = ?", inserts[0], function(err, results, fields){
-                    if (err) {
+                    if (err || results.length == 0) {
                         res.status(400).end();
                     } else {
                         res.statusMessage += "Game '" + game_name + "' for '" + results[0].console_name + "' added." + "\\n";
@@ -761,7 +767,7 @@ function addGenresGames(res, mysql, context, totalGenres, game_name, complete){
             else if(results.length == 0){
                 // Get genre_name
                 mysql.pool.query("SELECT genre_name FROM Genres where genre_ID = ?", inserts[0], function(err, results, fields){
-                    if (err) {
+                    if (err || results.length == 0) {
                         res.status(400).end();
                     } else {
                         res.statusMessage += "Genre '" + results[0].genre_name + "' for '" + game_name + "' added." + "\\n";
