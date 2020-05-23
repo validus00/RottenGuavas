@@ -24,7 +24,7 @@ $(document).ready(function () {
             //     window.location.replace("/");
             // },
             error: function (results) {
-                alert("username already in use");
+                alert(results.statusText);
             }
         });
         return;
