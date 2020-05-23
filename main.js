@@ -678,16 +678,26 @@ function addConsolesGames(res, mysql, context, totalConsoles, totalGenres, game_
 
     // See if Consoles_Games relationship already exists
     function findRelationship(inserts){
-        mysql.pool.query("SELECT console_ID FROM Consoles_Games WHERE console_ID = ? AND game_ID = ?", inserts, function(err, results, fields){
+        mysql.pool.query("SELECT console_name FROM Consoles_Games "
+            + " JOIN Consoles ON Consoles_Games.console_ID = Consoles.console_ID "
+            + " WHERE Consoles_Games.console_ID = ? AND game_ID = ?", inserts, function(err, results, fields){
 
-            console.log(inserts[0]);
+            if(err){
+                res.status(400).end();
+            }
             // Relationship doesn't exist so insert Consoles_Games relationship
-            if(results.length == 0){
-                // res.statusMessage += "Game '" + game_name + "' for Console: " + inserts[0] + " added." + "\\n";
-                addRelationship(inserts);
+            else if(results.length == 0){
+                // Get console_name
+                mysql.pool.query("SELECT console_name FROM Consoles where console_ID = ?", inserts[0], function(err, results, fields){
+                    if(err){
+                        res.status(400).end();
+                    }
+                    res.statusMessage += "Game '" + game_name + "' for '" + results[0].console_name + "' added." + "\\n";
+                    addRelationship(inserts);
+                });
             }
             else{
-                // res.statusMessage += "Game '" + game_name + "' for Console: " + inserts[0] + " already exists." + "\\n";
+                res.statusMessage += "Game '" + game_name + "' for '" + results[0].console_name + "' already exists." + "\\n";
                 addRelationship([]);
             }
         });
@@ -714,6 +724,11 @@ function addConsolesGames(res, mysql, context, totalConsoles, totalGenres, game_
 // Checks if Genres_Games relationship already exists. Inserts relationship if it doesn't already exist.
 function addGenresGames(res, mysql, context, totalGenres, game_name, complete){
    
+    // If no Genres, go back to complete
+    if(totalGenres <= 0){
+        complete(res, game_name);
+    }
+
     var inserts = [];
 
     // Go through each Genre to add
@@ -725,15 +740,26 @@ function addGenresGames(res, mysql, context, totalGenres, game_name, complete){
 
     // See if Consoles_Games relationship already exists
     function findRelationship(inserts){
-        mysql.pool.query("SELECT genre_ID FROM Genres_Games WHERE genre_ID = ? AND game_ID = ?", inserts, function(err, results, fields){
+        mysql.pool.query("SELECT genre_name FROM Genres_Games "
+            + " JOIN Genres ON Genres_Games.genre_ID = Genres.genre_ID "
+            + " WHERE Genres_Games.genre_ID = ? AND game_ID = ?", inserts, function(err, results, fields){
 
-            // Relationship doesn't exist so insert Consoles_Games relationship
-            if(results.length == 0){
-                // res.statusMessage += "Game '" + game_name + "' for Genre: " + inserts[0] + " added." + "\\n";
-                addRelationship(inserts);
+            if(err){
+                res.status(400).end();
+            }
+            // Relationship doesn't exist so insert Genre_Games relationship
+            else if(results.length == 0){
+                // Get genre_name
+                mysql.pool.query("SELECT genre_name FROM Genres where genre_ID = ?", inserts[0], function(err, results, fields){
+                    if(err){
+                        res.status(400).end();
+                    }
+                    res.statusMessage += "Genre '" + results[0].genre_name + "' for '" + game_name + "' added." + "\\n";
+                    addRelationship(inserts);
+                });
             }
             else{
-                // res.statusMessage += "Game '" + game_name + "' for Console: " + inserts[0] + " already exists." + "\\n";
+                res.statusMessage += "Genre '" + results[0].genre_name + "' for '" + game_name + "' already exists." + "\\n";
                 addRelationship([]);
             }
         });
@@ -861,7 +887,6 @@ app.post("/addGame", function (req, res) {
     function addGGComplete(res, game_name){
         thirdCBCount++;
         if(thirdCBCount >= totalGenres){
-            // res.statusMessage += "Im done";
             res.status(200).end();
         }
     }

@@ -6,7 +6,7 @@ $(document).ready(function () {
             type: "POST",
             data: $("#addGame").serialize(),
             success: function(data, textStatus, results){ 
-                alert(results.statusText);
+                alert(results.statusText.replace(/\\n/g,"\n"));
                 // alert(textStatus);
                 window.location.replace("/");
             },
