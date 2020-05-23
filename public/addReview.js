@@ -2,8 +2,8 @@ $(document).ready(function () {
     $("#addReview").submit(function (e) {
         e.preventDefault();
         var formData = {
-            "console_ID": $("input[name=console_ID").val(),
-            "game_ID": $("input[name=game_ID").val()
+            "console_ID": $("input[name=console_ID]").val(),
+            "game_ID": $("input[name=game_ID]").val()
         };
         $.ajax({
             url: "/addReview",
