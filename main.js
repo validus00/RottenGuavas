@@ -871,6 +871,7 @@ app.post("/addGame", function (req, res) {
                                 res.statusMessage = JSON.stringify(error);
                                 res.status(400).end();
                             } else {
+                                res.statusMessage += "Game '" + req.body.game_name + "' added.\\n";
                                 // Use gameID to start process of adding Consoles_Games and Genres_Games
                                 getGameID(req, res, mysql, context, req.body.game_name, complete);
                             }
@@ -880,6 +881,7 @@ app.post("/addGame", function (req, res) {
 
                 // Game_name already exists so check Consoles_Games and Genres_Games relationships 
                 else {
+                    res.statusMessage += "Game '" + req.body.game_name + "' already exists.\\n";
                     getGameID(req, res, mysql, context, results[0].game_name, complete);
                 }
             }
