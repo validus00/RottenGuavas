@@ -38,7 +38,7 @@
         <label for="summary"><strong>Summary</strong></label>
         <textarea class="form-control" name="summary" style="background-color:white;color:black;height:300px" readonly>{{description}}</textarea>
     </div>
-    <button onclick="reviewCheck({{game_ID}}, {{console_ID}}, '{{game_name}}', '{{console_name}}')" class="btn btn-primary" type="button">Add Review</button>
+    <button onclick="reviewCheck({{game_ID}}, {{console_ID}}, `{{game_name}}`, `{{console_name}}`)" class="btn btn-primary" type="button">Add Review</button>
     <button onclick="deleteGame({{console_ID}}, {{game_ID}})" class="btn btn-primary" type="button">Delete Game</button>
 
     <hr class="my-4">
