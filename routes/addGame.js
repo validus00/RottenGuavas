@@ -2,9 +2,11 @@ module.exports = function () {
     var express = require("express");
     var router = express.Router();
 
-    function getConsoles(res, mysql, context, complete) {
+    function getConsoles(res, mysql, context, complete, datetime) {
+        console.log(datetime, "/addGame", "SELECT console_ID, console_name FROM Consoles ORDER BY console_ID");
         mysql.pool.query("SELECT console_ID, console_name FROM Consoles ORDER BY console_ID", function (error, results) {
             if (error) {
+                console.error(datetime, "/addGame", JSON.stringify(error));
                 res.write(JSON.stringify(error));
                 res.end();
             }
@@ -13,9 +15,11 @@ module.exports = function () {
         });
     }
 
-    function getGenres(res, mysql, context, complete) {
+    function getGenres(res, mysql, context, complete, datetime) {
+        console.log(datetime, "/addGame", "SELECT genre_ID, genre_name FROM Genres ORDER BY genre_name ASC");
         mysql.pool.query("SELECT genre_ID, genre_name FROM Genres ORDER BY genre_name ASC", function (error, results) {
             if (error) {
+                console.error(datetime, "/addGame", JSON.stringify(error));
                 res.write(JSON.stringify(error));
                 res.end();
             }
@@ -29,6 +33,7 @@ module.exports = function () {
         var callbackCount = 0;
         var context = {};
         var mysql = req.app.get("mysql");
+        var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
 
         context.jsscripts = ["addGame.js"];
 
@@ -36,8 +41,8 @@ module.exports = function () {
             context.loggedin = true;
         }
 
-        getConsoles(res, mysql, context, complete);
-        getGenres(res, mysql, context, complete);
+        getConsoles(res, mysql, context, complete, datetime);
+        getGenres(res, mysql, context, complete, datetime);
 
         function complete() {
             callbackCount++;
@@ -47,10 +52,15 @@ module.exports = function () {
         }
     });
 
-    function getGameID(req, res, mysql, context, game_name, complete) {
+    function getGameID(req, res, mysql, context, game_name, complete, datetime) {
+        console.log(datetime, "/addGame", "SELECT game_ID FROM Games WHERE game_name = ?", game_name);
         mysql.pool.query("SELECT game_ID FROM Games WHERE game_name = ?", game_name, function (error, results, fields) {
-            if (error || results.length == 0) {
+            if (error) {
+                console.error(datetime, "/addGame", JSON.stringify(error));
                 res.statusMessage = JSON.stringify(error);
+                res.status(400).end();
+            } else if (results.length == 0) {
+                console.error(datetime, "/addGame results is empty");
                 res.status(400).end();
             } else {
                 context.game_ID = results[0].game_ID;
@@ -60,7 +70,7 @@ module.exports = function () {
     }
 
     // Checks if Consoles_Games relationship already exists. Inserts relationship if it doesn't already exist.
-    function addConsolesGames(res, mysql, context, totalConsoles, totalGenres, game_name, complete) {
+    function addConsolesGames(res, mysql, context, totalConsoles, totalGenres, game_name, complete, datetime) {
 
         var inserts = [];
 
@@ -72,18 +82,27 @@ module.exports = function () {
 
         // See if Consoles_Games relationship already exists
         function findRelationship(inserts) {
+            console.log(datetime, "/addGame", "SELECT console_name FROM Consoles_Games "
+                + " JOIN Consoles ON Consoles_Games.console_ID = Consoles.console_ID "
+                + " WHERE Consoles_Games.console_ID = ? AND game_ID = ?", inserts);
             mysql.pool.query("SELECT console_name FROM Consoles_Games "
                 + " JOIN Consoles ON Consoles_Games.console_ID = Consoles.console_ID "
                 + " WHERE Consoles_Games.console_ID = ? AND game_ID = ?", inserts, function (err, results, fields) {
 
                     if (err) {
+                        console.error(datetime, "/addGame", JSON.stringify(error));
                         res.status(400).end();
                     }
                     // Relationship doesn't exist so insert Consoles_Games relationship
                     else if (results.length == 0) {
                         // Get console_name
+                        console.log(datetime, "/addGame", "SELECT console_name FROM Consoles where console_ID = ?", inserts[0]);
                         mysql.pool.query("SELECT console_name FROM Consoles where console_ID = ?", inserts[0], function (err, results, fields) {
-                            if (err || results.length == 0) {
+                            if (err) {
+                                console.error(datetime, "/addGame", JSON.stringify(error));
+                                res.status(400).end();
+                            } else if (results.length == 0) {
+                                console.error(datetime, "/addGame results is empty");
                                 res.status(400).end();
                             } else {
                                 res.statusMessage += "Game '" + game_name + "' for '" + results[0].console_name + "' added." + "\\n";
@@ -102,8 +121,10 @@ module.exports = function () {
         // Add Consoles_Games relationship
         function addRelationship(inserts) {
             if (inserts.length > 0) {
+                console.log(datetime, "/addGame", "INSERT INTO Consoles_Games(console_ID, game_ID) VALUES (?, ?)", inserts);
                 mysql.pool.query("INSERT INTO Consoles_Games(console_ID, game_ID) VALUES (?, ?)", inserts, function (error, results, fields) {
                     if (error) {
+                        console.error(datetime, "/addGame", JSON.stringify(error));
                         res.statusMessage = JSON.stringify(error);
                         res.status(400).end();
                     } else {
@@ -118,7 +139,7 @@ module.exports = function () {
     }
 
     // Checks if Genres_Games relationship already exists. Inserts relationship if it doesn't already exist.
-    function addGenresGames(res, mysql, context, totalGenres, game_name, complete) {
+    function addGenresGames(res, mysql, context, totalGenres, game_name, complete, datetime) {
 
         // If no Genres, go back to complete
         if (totalGenres <= 0) {
@@ -136,18 +157,27 @@ module.exports = function () {
 
         // See if Consoles_Games relationship already exists
         function findRelationship(inserts) {
+            console.log(datetime, "/addGame", "SELECT genre_name FROM Genres_Games "
+                + " JOIN Genres ON Genres_Games.genre_ID = Genres.genre_ID "
+                + " WHERE Genres_Games.genre_ID = ? AND game_ID = ?", inserts);
             mysql.pool.query("SELECT genre_name FROM Genres_Games "
                 + " JOIN Genres ON Genres_Games.genre_ID = Genres.genre_ID "
                 + " WHERE Genres_Games.genre_ID = ? AND game_ID = ?", inserts, function (err, results, fields) {
 
                     if (err) {
+                        console.error(datetime, "/addGame", JSON.stringify(error));
                         res.status(400).end();
                     }
                     // Relationship doesn't exist so insert Genre_Games relationship
                     else if (results.length == 0) {
                         // Get genre_name
+                        console.log(datetime, "/addGame", "SELECT genre_name FROM Genres where genre_ID = ?", inserts[0]);
                         mysql.pool.query("SELECT genre_name FROM Genres where genre_ID = ?", inserts[0], function (err, results, fields) {
-                            if (err || results.length == 0) {
+                            if (err) {
+                                console.error(datetime, "/addGame", JSON.stringify(error));
+                                res.status(400).end();
+                            } else if (results.length == 0) {
+                                console.error(datetime, "/addGame results is empty");
                                 res.status(400).end();
                             } else {
                                 res.statusMessage += "Genre '" + results[0].genre_name + "' for '" + game_name + "' added." + "\\n";
@@ -166,8 +196,10 @@ module.exports = function () {
         // Add Consoles_Games relationship
         function addRelationship(inserts) {
             if (inserts.length > 0) {
+                console.log(datetime, "/addGame", "INSERT INTO Genres_Games(genre_ID, game_ID) VALUES (?, ?)", inserts);
                 mysql.pool.query("INSERT INTO Genres_Games(genre_ID, game_ID) VALUES (?, ?)", inserts, function (error, results, fields) {
                     if (error) {
+                        console.error(datetime, "/addGame", JSON.stringify(error));
                         res.statusMessage = JSON.stringify(error);
                         res.status(400).end();
                     } else {
@@ -205,14 +237,17 @@ module.exports = function () {
         // Consoles are chosen so we can continue adding a game
         else {
             var mysql = req.app.get("mysql");
+            var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
 
             // See if game_name already exists in the database
             var inserts = [req.body.game_name];
 
             // To get proper game_name stored in database
+            console.log(datetime, "/addGame", "SELECT game_name FROM Games WHERE game_name = ?", inserts);
             mysql.pool.query("SELECT game_name FROM Games WHERE game_name = ?", inserts, function (error, results, fields) {
 
                 if (error) {
+                    console.error(datetime, "/addGame", JSON.stringify(error));
                     res.statusMessage = JSON.stringify(error);
                     res.status(400).end();
                 } else {
@@ -246,9 +281,12 @@ module.exports = function () {
 
                         // Insert game into Games
                         inserts = [req.body.game_name, req.body.release_date, req.body.description, req.body.photo];
+                        console.log(datetime, "/addGame", "INSERT INTO Games (game_name, release_date, description, photo) VALUES (?, ?, ?, ?)",
+                            inserts);
                         mysql.pool.query("INSERT INTO Games (game_name, release_date, description, photo) VALUES (?, ?, ?, ?)",
                             inserts, function (error, results, fields) {
                                 if (error) {
+                                    console.error(datetime, "/addGame", JSON.stringify(error));
                                     res.statusMessage = JSON.stringify(error);
                                     res.status(400).end();
                                 } else {
@@ -273,7 +311,7 @@ module.exports = function () {
         function complete(res, context, game_name) {
             firstCBCount++;
             if (firstCBCount >= totalFirstCB) {
-                addConsolesGames(res, mysql, context, totalConsoles, totalGenres, game_name, addCGComplete);
+                addConsolesGames(res, mysql, context, totalConsoles, totalGenres, game_name, addCGComplete, datetime);
             }
         }
 
@@ -281,14 +319,14 @@ module.exports = function () {
         function addCGComplete(res, game_name) {
             secondCBCount++;
             if (secondCBCount >= totalConsoles) {
-                addGenresGames(res, mysql, context, totalGenres, game_name, addGGComplete);
+                addGenresGames(res, mysql, context, totalGenres, game_name, addGGComplete, datetime);
             }
         }
 
         // Async used after addGenresGames() is finished
         function addGGComplete(res, game_name) {
             thirdCBCount++;
-            if (thirdCBCount >= totalGenres) {
+            if (thirdCBCount >= totalGenres, datetime) {
                 res.status(200).end();
             }
         }

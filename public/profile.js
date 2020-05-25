@@ -7,7 +7,6 @@ $(document).ready(function () {
             data: $("#profile").serialize(),
             success: function () {
                 alert("profile updated");
-                window.location.replace("/profile");
             },
             error: function (results) {
                 alert(results.statusText);

@@ -2,9 +2,11 @@ module.exports = function () {
     var express = require("express");
     var router = express.Router();
 
-    function getConsoles(res, mysql, context, complete) {
+    function getConsoles(res, mysql, context, complete, datetime) {
+        console.log(datetime, "/", "SELECT console_ID, console_name FROM Consoles ORDER BY console_ID");
         mysql.pool.query("SELECT console_ID, console_name FROM Consoles ORDER BY console_ID", function (error, results) {
             if (error) {
+                console.error(datetime, "/", JSON.stringify(error));
                 res.write(JSON.stringify(error));
                 res.end();
             }
@@ -13,9 +15,11 @@ module.exports = function () {
         });
     }
 
-    function getGenres(res, mysql, context, complete) {
+    function getGenres(res, mysql, context, complete, datetime) {
+        console.log(datetime, "/", "SELECT genre_ID, genre_name FROM Genres ORDER BY genre_name ASC");
         mysql.pool.query("SELECT genre_ID, genre_name FROM Genres ORDER BY genre_name ASC", function (error, results) {
             if (error) {
+                console.error(datetime, "/", JSON.stringify(error));
                 res.write(JSON.stringify(error));
                 res.end();
             }
@@ -24,13 +28,15 @@ module.exports = function () {
         });
     }
 
-    function getGamesHelper(res, mysql, list, name, genresList, searchName, complete) {
+    function getGamesHelper(res, mysql, list, name, genresList, searchName, complete, datetime) {
         var sql = "SELECT Consoles.console_ID, console_name, Games.game_ID, game_name, AVG(rating) AS rating FROM Games"
             + " JOIN Consoles_Games ON Games.game_ID = Consoles_Games.game_ID"
             + " JOIN Consoles ON Consoles_Games.console_ID = Consoles.console_ID"
             + " LEFT JOIN Reviews ON Consoles.console_ID = Reviews.console_ID AND Games.game_ID = Reviews.game_ID";
         if (searchName) {
             var inserts = [name, searchName];
+            console.log(datetime, "/", sql + " WHERE console_name = ? AND game_name = ? GROUP BY game_name ORDER BY rating DESC",
+                inserts);
             mysql.pool.query(sql + " WHERE console_name = ? AND game_name = ? GROUP BY game_name ORDER BY rating DESC",
                 inserts, helper);
         } else if (genresList.length > 0) {
@@ -42,13 +48,16 @@ module.exports = function () {
                     genreStr += " OR genre_ID = ?";
                 }
             }
+            console.log(datetime, "/", sql + genreStr + ") GROUP BY game_name ORDER BY rating DESC", inserts);
             mysql.pool.query(sql + genreStr + ") GROUP BY game_name ORDER BY rating DESC", inserts, helper);
         } else {
+            console.log(datetime, "/", sql + " WHERE console_name = ? GROUP BY game_name ORDER BY rating DESC", name);
             mysql.pool.query(sql + " WHERE console_name = ? GROUP BY game_name ORDER BY rating DESC", name, helper);
         }
 
         function helper(error, results) {
             if (error) {
+                console.error(datetime, "/", JSON.stringify(error));
                 res.write(JSON.stringify(error));
                 res.end();
             }
@@ -60,7 +69,7 @@ module.exports = function () {
         }
     }
 
-    function getGames(res, mysql, context, complete, consolesList, genresList, searchName) {
+    function getGames(res, mysql, context, complete, consolesList, genresList, searchName, datetime) {
         var callbackCount = 0;
         var inserts = [];
         genreStr = "";
@@ -78,10 +87,14 @@ module.exports = function () {
             genreStr += ") GROUP BY console_name";
         }
         if (searchName) {
+            console.log(datetime, "/", "SELECT Consoles.console_ID, console_name FROM Consoles JOIN Consoles_Games ON Consoles.console_ID ="
+                + " Consoles_Games.console_ID JOIN Games ON Consoles_Games.game_ID = Games.game_ID WHERE game_name = ?",
+                searchName);
             mysql.pool.query("SELECT Consoles.console_ID, console_name FROM Consoles JOIN Consoles_Games ON Consoles.console_ID ="
                 + " Consoles_Games.console_ID JOIN Games ON Consoles_Games.game_ID = Games.game_ID WHERE game_name = ?",
                 searchName, helper);
         } else {
+            console.log(datetime, "/", "SELECT Consoles.console_ID, console_name FROM Consoles" + genreStr + " ORDER BY console_ID", inserts);
             mysql.pool.query("SELECT Consoles.console_ID, console_name FROM Consoles" + genreStr + " ORDER BY console_ID", inserts, helper);
         }
 
@@ -89,6 +102,7 @@ module.exports = function () {
             var list = [];
             var resultsList = consolesList;
             if (error) {
+                console.error(datetime, "/", JSON.stringify(error));
                 res.write(JSON.stringify(error));
                 res.end();
             }
@@ -103,9 +117,9 @@ module.exports = function () {
             }
             for (var i = 0; i < resultsList.length; i++) {
                 if (consolesList.length == 0) {
-                    getGamesHelper(res, mysql, list, resultsList[i].console_name, genresList, searchName, interComplete);
+                    getGamesHelper(res, mysql, list, resultsList[i].console_name, genresList, searchName, interComplete, datetime);
                 } else {
-                    getGamesHelper(res, mysql, list, resultsList[i], genresList, searchName, interComplete);
+                    getGamesHelper(res, mysql, list, resultsList[i], genresList, searchName, interComplete, datetime);
                 }
             }
 
@@ -137,12 +151,13 @@ module.exports = function () {
         var totalCallBack = 2;
         var callbackCount = 0;
         var context = {};
+        var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
         if (req.session.loggedin) {
             context.loggedin = true;
         }
         var mysql = req.app.get("mysql");
-        getGames(res, mysql, context, complete, [], [], null);
-        getGenres(res, mysql, context, complete);
+        getGames(res, mysql, context, complete, [], [], null, datetime);
+        getGenres(res, mysql, context, complete, datetime);
 
         function complete() {
             callbackCount++;
@@ -153,15 +168,19 @@ module.exports = function () {
         }
     });
 
-    function addConsole(name, res, mysql) {
+    function addConsole(name, res, mysql, datetime) {
+        console.log(datetime, "/", "SELECT * FROM Consoles WHERE console_name = ?", name);
         mysql.pool.query("SELECT * FROM Consoles WHERE console_name = ?", name, function (error, results) {
             if (error) {
+                console.error(datetime, "/", JSON.stringify(error));
                 res.write(JSON.stringify(error));
                 res.end();
             }
             if (results.length == 0) {
+                console.log(datetime, "/", "INSERT INTO Consoles (console_name) VALUES (?)", name);
                 mysql.pool.query("INSERT INTO Consoles (console_name) VALUES (?)", name, function (error) {
                     if (error) {
+                        console.error(datetime, "/", JSON.stringify(error));
                         res.write(JSON.stringify(error));
                         res.end();
                     }
@@ -173,15 +192,19 @@ module.exports = function () {
         });
     }
 
-    function addGenre(name, res, mysql) {
+    function addGenre(name, res, mysql, datetime) {
+        console.log(datetime, "/", "SELECT * FROM Genres WHERE genre_name = ?", name);
         mysql.pool.query("SELECT * FROM Genres WHERE genre_name = ?", name, function (error, results) {
             if (error) {
+                console.error(datetime, "/", JSON.stringify(error));
                 res.write(JSON.stringify(error));
                 res.end();
             }
             if (results.length == 0) {
+                console.log(datetime, "/", "INSERT INTO Genres (genre_name) VALUES (?)", name);
                 mysql.pool.query("INSERT INTO Genres (genre_name) VALUES (?)", name, function (error) {
                     if (error) {
+                        console.error(datetime, "/", JSON.stringify(error));
                         res.write(JSON.stringify(error));
                         res.end();
                     }
@@ -195,10 +218,11 @@ module.exports = function () {
 
     router.post("/", function (req, res) {
         var mysql = req.app.get("mysql");
+        var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
         if (req.body.new_console) {
-            addConsole(req.body.new_console, res, mysql);
+            addConsole(req.body.new_console, res, mysql, datetime);
         } else if (req.body.new_genre) {
-            addGenre(req.body.new_genre, res, mysql);
+            addGenre(req.body.new_genre, res, mysql, datetime);
         } else {
             var totalCallBack = 2;
             var callbackCount = 0;
@@ -226,8 +250,8 @@ module.exports = function () {
                     genresList.push(req.body.genre_selection);
                 }
             }
-            getGames(res, mysql, context, complete, consolesList, genresList, searchName);
-            getGenres(res, mysql, context, complete);
+            getGames(res, mysql, context, complete, consolesList, genresList, searchName, datetime);
+            getGenres(res, mysql, context, complete, datetime);
             if (searchName || genresList.length > 0) {
                 totalCallBack++;
                 getConsoles(res, mysql, context, complete);

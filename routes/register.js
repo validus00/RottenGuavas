@@ -2,9 +2,11 @@ module.exports = function () {
     var express = require("express");
     var router = express.Router();
 
-    function getConsoles(res, mysql, context, complete) {
+    function getConsoles(res, mysql, context, complete, datetime) {
+        console.log(datetime, "/register", "SELECT console_ID, console_name FROM Consoles ORDER BY console_ID");
         mysql.pool.query("SELECT console_ID, console_name FROM Consoles ORDER BY console_ID", function (error, results) {
             if (error) {
+                console.error(datetime, "/register", JSON.stringify(error));
                 res.write(JSON.stringify(error));
                 res.end();
             }
@@ -18,9 +20,10 @@ module.exports = function () {
         var callbackCount = 0;
         var context = {};
         var mysql = req.app.get("mysql");
+        var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
         context.jsscripts = ["register.js"];
 
-        getConsoles(res, mysql, context, complete);
+        getConsoles(res, mysql, context, complete, datetime);
 
         function complete() {
             callbackCount++;
@@ -41,8 +44,11 @@ module.exports = function () {
     router.post("/", function (req, res) {
         var mysql = req.app.get("mysql");
         var inserts = [req.body.username];
+        var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+        console.log(datetime, "/register", "SELECT * FROM Users WHERE user_name = ?", inserts);
         mysql.pool.query("SELECT * FROM Users WHERE user_name = ?", inserts, function (error, results) {
             if (error) {
+                console.error(datetime, "/register", JSON.stringify(error));
                 res.statusMessage = JSON.stringify(error);
                 res.status(400).end();
             } else {
@@ -51,9 +57,12 @@ module.exports = function () {
                         req.body.console = null;
                     }
                     inserts = [req.body.username, req.body.password, req.body.email, req.body.console, req.body.photo];
+                    console.log(datetime, "/register", "INSERT INTO Users (user_name, password, email, pref_console_ID, photo) VALUES (?, ?, ?, ?, ?)",
+                        inserts);
                     mysql.pool.query("INSERT INTO Users (user_name, password, email, pref_console_ID, photo) VALUES (?, ?, ?, ?, ?)",
                         inserts, function (error) {
                             if (error) {
+                                console.error(datetime, "/register", JSON.stringify(error));
                                 res.statusMessage = JSON.stringify(error);
                                 res.status(400).end();
                             } else {

@@ -2,9 +2,11 @@ module.exports = function () {
     var express = require("express");
     var router = express.Router();
 
-    function getConsoles(res, mysql, context, complete) {
+    function getConsoles(res, mysql, context, complete, datetime) {
+        console.log(datetime, "/profile", "SELECT console_ID, console_name FROM Consoles ORDER BY console_ID");
         mysql.pool.query("SELECT console_ID, console_name FROM Consoles ORDER BY console_ID", function (error, results) {
             if (error) {
+                console.error(datetime, "/profile", JSON.stringify(error));
                 res.write(JSON.stringify(error));
                 res.end();
             }
@@ -13,14 +15,17 @@ module.exports = function () {
         });
     }
 
-    function getUser(req, res, mysql, context, complete) {
+    function getUser(req, res, mysql, context, complete, datetime) {
+        console.log(datetime, "/profile", "SELECT * FROM Users WHERE user_ID = ?", req.session.user_ID);
         mysql.pool.query("SELECT * FROM Users WHERE user_ID = ?", req.session.user_ID,
             function (error, results) {
                 if (error) {
+                    console.error(datetime, "/profile", JSON.stringify(error));
                     res.write(JSON.stringify(error));
                     res.end();
                 }
                 if (results.length == 0) {
+                    console.error(datetime, "/profile results is empty")
                     res.redirect("/");
                 } else {
                     context.user_name = results[0].user_name;
@@ -33,11 +38,15 @@ module.exports = function () {
             });
     }
 
-    function getUserReviews(req, res, mysql, context, complete) {
+    function getUserReviews(req, res, mysql, context, complete, datetime) {
+        console.log(datetime, "/profile", "SELECT review_ID, game_name, console_name, rating, review_date, title, content FROM Reviews"
+            + " JOIN Games ON Reviews.game_ID = Games.game_ID JOIN Consoles ON Reviews.console_ID = Consoles.console_ID"
+            + " WHERE user_ID = ?", req.session.user_ID);
         mysql.pool.query("SELECT review_ID, game_name, console_name, rating, review_date, title, content FROM Reviews"
             + " JOIN Games ON Reviews.game_ID = Games.game_ID JOIN Consoles ON Reviews.console_ID = Consoles.console_ID"
             + " WHERE user_ID = ?", req.session.user_ID, function (error, results) {
                 if (error) {
+                    console.error(datetime, "/profile", JSON.stringify(error));
                     res.write(JSON.stringify(error));
                     res.end();
                 }
@@ -50,9 +59,13 @@ module.exports = function () {
         if (req.session.loggedin) {
             var mysql = req.app.get("mysql");
             var inserts = [req.query.review_ID, req.session.user_ID];
+            var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+            console.log(datetime, "/profile", "DELETE FROM Reviews WHERE review_ID = ? AND user_ID = ?",
+                inserts);
             mysql.pool.query("DELETE FROM Reviews WHERE review_ID = ? AND user_ID = ?",
                 inserts, function (error) {
                     if (error) {
+                        console.error(datetime, "/profile", JSON.stringify(error));
                         res.statusMessage = JSON.stringify(error);
                         res.status(400).end();
                     } else {
@@ -70,11 +83,12 @@ module.exports = function () {
             var callbackCount = 0;
             var context = {};
             var mysql = req.app.get("mysql");
+            var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
             context.jsscripts = ["profile.js"];
             context.loggedin = true;
-            getUser(req, res, mysql, context, complete);
-            getConsoles(res, mysql, context, complete);
-            getUserReviews(req, res, mysql, context, complete);
+            getUser(req, res, mysql, context, complete, datetime);
+            getConsoles(res, mysql, context, complete, datetime);
+            getUserReviews(req, res, mysql, context, complete, datetime);
 
             function complete() {
                 callbackCount++;
@@ -92,6 +106,7 @@ module.exports = function () {
                 }
             }
         } else {
+            console.error(datetime, "/profile unauthorized");
             res.redirect("/login");
         }
     });
@@ -99,8 +114,11 @@ module.exports = function () {
     router.post("/", function (req, res) {
         var mysql = req.app.get("mysql");
         var inserts = [req.body.username, req.session.user_ID];
+        var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+        console.log(datetime, "/profile", "SELECT * FROM Users WHERE user_name = ? AND user_ID != ?", inserts);
         mysql.pool.query("SELECT * FROM Users WHERE user_name = ? AND user_ID != ?", inserts, function (error, results) {
             if (error) {
+                console.error(datetime, "/profile", JSON.stringify(error));
                 res.statusMessage = JSON.stringify(error);
                 res.status(400).end();
             } else {
@@ -109,9 +127,12 @@ module.exports = function () {
                         req.body.console = null;
                     }
                     inserts = [req.body.username, req.body.password, req.body.email, req.body.console, req.body.photo, req.session.user_ID];
+                    console.log(datetime, "/profile", "UPDATE Users SET user_name = ?, password = ?, email = ?, pref_console_ID = ?, photo = ? WHERE user_ID = ?",
+                        inserts);
                     mysql.pool.query("UPDATE Users SET user_name = ?, password = ?, email = ?, pref_console_ID = ?, photo = ? WHERE user_ID = ?",
                         inserts, function (error) {
                             if (error) {
+                                console.error(datetime, "/profile", JSON.stringify(error));
                                 res.statusMessage = JSON.stringify(error);
                                 res.status(400).end();
                             } else {
