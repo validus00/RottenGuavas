@@ -20,7 +20,7 @@
             <label for="console">Preferred Console</label>
             <select id="console" name="console">
                 {{#each options}}
-                    <option value="{{console_ID}}">{{console_name}}</option>
+                <option value="{{console_ID}}">{{console_name}}</option>
                 {{/each}}
             </select>
         </div>
@@ -29,5 +29,6 @@
             <input type="text" name="photo" placeholder="photo" value="{{photo}}">
         </div>
         <button type="submit" class="btn btn-primary">Sign Up!</button>
+        <button onclick="location.href='/'" type="button" class="btn btn-primary">Cancel</button>
     </form>
 </div>

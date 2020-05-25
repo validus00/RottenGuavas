@@ -21,12 +21,12 @@
             <div class="form-group">
                 <label for="console_name">Console(s):</label>
                 {{#each consoles}}
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="{{console_ID}}" name="console_selection">
-                        <label class="form-check-label" for="{{console_name}}">
-                            {{console_name}}
-                        </label>
-                    </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{console_ID}}" name="console_selection">
+                    <label class="form-check-label" for="{{console_name}}">
+                        {{console_name}}
+                    </label>
+                </div>
                 {{/each}}
             </div>
 
@@ -34,12 +34,12 @@
             <div class="form-group">
                 <label for="genre_name">Genre(s):</label>
                 {{#each genres}}
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="{{genre_ID}}" name="genre_selection">
-                        <label class="form-check-label" for="{{genre_name}}">
-                            {{genre_name}}
-                        </label>
-                    </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{genre_ID}}" name="genre_selection">
+                    <label class="form-check-label" for="{{genre_name}}">
+                        {{genre_name}}
+                    </label>
+                </div>
                 {{/each}}
             </div>
 
@@ -51,8 +51,9 @@
             <div class="form-group">
                 <label for="photo">Game Image (url):</label>
                 <input type="text" name="photo" placeholder="photo" value="{{photo}}">
-            </div>      
+            </div>
             <button type="submit" class="btn btn-primary">Submit</button>
+            <button onclick="location.href='/'" type="button" class="btn btn-primary">Cancel</button>
         </form>
     </div>
 </div>
