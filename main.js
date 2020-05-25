@@ -15,11 +15,11 @@ var bodyParser = require('body-parser');
 var app = express();
 var handlebars = require('express-handlebars').create({
     defaultLayout: 'main',
-    helpers: {                                         // helper functions for handlebars
-        inc: function (number) {                       // function to increment number
+    helpers: {                                  // helper functions for handlebars
+        inc: function (number) {                // function to increment number
             return number + 1;
         },
-        toFixed: function (number) {                   // function to convert num to 1 decimal place
+        toFixed: function (number) {            // function to convert num to 1 decimal place
             return number.toFixed(1);
         },
         freshOrNot: function (number) {         // function to evaluate fresh or not, return field for page
@@ -29,12 +29,12 @@ var handlebars = require('express-handlebars').create({
                 return "Not!";
             }
         },
-        formatDate: function (date) {                  // function to splice out time from date
+        formatDate: function (date) {           // function to splice out time from date
             if (date) {
-                return date.toString().split(" ").slice(0, 4).join(" ");    // 0-4 = date
+                return date.toString().split(" ").slice(0, 4).join(" "); // 0-4 = date
             }
         },
-        processOption: function (pref_console_ID, console_ID) { // for combobox option
+        processOption: function (pref_console_ID, console_ID) { // for drop-down box options
             if (pref_console_ID && console_ID && pref_console_ID == console_ID) {
                 return " selected";
             }
@@ -455,7 +455,7 @@ app.get("/games", function (req, res) {
     var totalCallBack = 4;
     var callbackCount = 0;
     var context = {};
-    context.jsscripts = ["reviewCheck.js"];
+    context.jsscripts = ["games.js"];
     if (req.session.loggedin) {
         context.loggedin = true;
     }
@@ -471,15 +471,16 @@ app.get("/games", function (req, res) {
     }
 });
 
-app.get("/deleteGame", function (req, res) {
+app.delete("/deleteGame", function (req, res) {
     var inserts = [req.query.console_ID, req.query.game_ID];
     mysql.pool.query("DELETE FROM Consoles_Games WHERE console_ID = ? AND game_ID = ?",
         inserts, function (error) {
             if (error) {
-                res.write(JSON.stringify(error));
-                res.end();
+                res.statusMessage = JSON.stringify(error);
+                res.status(400).end();
+            } else {
+                res.status(200).end();
             }
-            res.redirect("/");
         });
 });
 
@@ -516,19 +517,20 @@ function getUserReviews(req, res, mysql, context, complete) {
         });
 }
 
-app.get("/deleteReview", function (req, res) {
+app.delete("/deleteReview", function (req, res) {
     if (req.session.loggedin) {
         var inserts = [req.query.review_ID, req.session.user_ID];
         mysql.pool.query("DELETE FROM Reviews WHERE review_ID = ? AND user_ID = ?",
             inserts, function (error) {
                 if (error) {
-                    res.write(JSON.stringify(error));
-                    res.end();
+                    res.statusMessage = JSON.stringify(error);
+                    res.status(400).end();
+                } else {
+                    res.status(200).end();
                 }
-                res.redirect("/profile");
             });
     } else {
-        res.redirect("/login");
+        res.status(401).end();
     }
 });
 

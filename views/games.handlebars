@@ -1,29 +1,3 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="/">
-        <img src="https://image.flaticon.com/icons/svg/2045/2045020.svg" width=50>
-        Rotten Guavas
-    </a>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav ml-auto">
-            {{#if loggedin}}
-            <li class="nav-item">
-                <a class="nav-link" href="/profile">User Profile </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/logout">Logout</a>
-            </li>
-            {{else}}
-            <li class="nav-item active">
-                <a class="nav-link" href="/login">Login</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/register">Sign Up</a>
-            </li>
-            {{/if}}
-        </ul>
-    </div>
-</nav>
-
 <div class="container-fluid">
     <h1 class="display-4">
         {{game_name}}
@@ -65,7 +39,7 @@
         <textarea class="form-control" name="summary" style="background-color:white;color:black;height:300px" readonly>{{description}}</textarea>
     </div>
     <button onclick="reviewCheck({{game_ID}}, {{console_ID}}, '{{game_name}}', '{{console_name}}')" class="btn btn-primary" type="button">Add Review</button>
-    <button onclick="location.href='/deleteGame?console_ID={{console_ID}}&game_ID={{game_ID}}'" class="btn btn-primary" type="button">Delete Game</button>
+    <button onclick="deleteGame({{console_ID}}, {{game_ID}})" class="btn btn-primary" type="button">Delete Game</button>
 
     <hr class="my-4">
 

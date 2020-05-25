@@ -11,3 +11,17 @@ function reviewCheck(game_ID, console_ID, game_name, console_name) {
         }
     })
 };
+
+function deleteGame(console_ID, game_ID) {
+    $.ajax({
+        url: "/deleteGame?console_ID=" + console_ID + "&game_ID=" + game_ID,
+        type: "DELETE",
+        success: function () {
+            alert("game deleted");
+            window.location.replace("/");
+        },
+        error: function (results) {
+            alert(results.statusText);
+        }
+    })
+};
