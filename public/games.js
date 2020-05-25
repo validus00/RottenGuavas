@@ -1,6 +1,6 @@
 function reviewCheck(game_ID, console_ID, game_name, console_name) {
     $.ajax({
-        url: "/reviewCheck",
+        url: "/games/reviewCheck",
         type: "GET",
         success: function () {
             window.location.replace("/addReview?console_ID=" + console_ID + "&console_name=" + console_name
@@ -14,7 +14,7 @@ function reviewCheck(game_ID, console_ID, game_name, console_name) {
 
 function deleteGame(console_ID, game_ID) {
     $.ajax({
-        url: "/deleteGame?console_ID=" + console_ID + "&game_ID=" + game_ID,
+        url: "/games/deleteGame?console_ID=" + console_ID + "&game_ID=" + game_ID,
         type: "DELETE",
         success: function () {
             alert("game deleted");

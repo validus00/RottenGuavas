@@ -19,7 +19,7 @@ $(document).ready(function () {
 
 function deleteReview(review_ID) {
     $.ajax({
-        url: "/deleteReview?review_ID=" + review_ID,
+        url: "/profile/deleteReview?review_ID=" + review_ID,
         type: "DELETE",
         success: function () {
             alert("review deleted");
