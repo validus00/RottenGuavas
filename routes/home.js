@@ -67,8 +67,8 @@ module.exports = function () {
                 }
                 context.genres = results;
                 if (searchName) {
-                    console.log(datetime, "/", "SELECT Consoles.console_ID, console_name FROM Consoles JOIN Consoles_Games ON Consoles.console_ID ="
-                        + " Consoles_Games.console_ID JOIN Games ON Consoles_Games.game_ID = Games.game_ID WHERE game_name LIKE ?",
+                    console.log(datetime, "/", "SELECT Consoles.console_ID, console_name FROM Consoles JOIN Consoles_Games ON Consoles.console_ID"
+                        + " = Consoles_Games.console_ID JOIN Games ON Consoles_Games.game_ID = Games.game_ID WHERE game_name LIKE ?",
                         searchName);
                     mysql.pool.query("SELECT Consoles.console_ID, console_name FROM Consoles JOIN Consoles_Games ON Consoles.console_ID ="
                         + " Consoles_Games.console_ID JOIN Games ON Consoles_Games.game_ID = Games.game_ID WHERE game_name LIKE ?",
@@ -111,19 +111,22 @@ module.exports = function () {
                         resultsList = results;
                     }
                     if (resultsList.length == 0) {
-                        interComplete();
-                    }
-                    for (var i = 0; i < resultsList.length; i++) {
-                        if (consolesList.length == 0) {
-                            getGamesHelper(res, mysql, context, gamesList, resultsList[i].console_name, genresList, searchName, interComplete, datetime);
-                        } else {
-                            for (var j = 0; j < context.consoles.length; j++) {
-                                if (resultsList[i] == context.consoles[j].console_name) {
-                                    context.consoles[j].checked = "checked";
-                                    break;
+                        complete();
+                    } else {
+                        for (var i = 0; i < resultsList.length; i++) {
+                            if (consolesList.length == 0) {
+                                getGamesHelper(res, mysql, context, gamesList, resultsList[i].console_name, genresList, searchName,
+                                    interComplete, datetime);
+                            } else {
+                                for (var j = 0; j < context.consoles.length; j++) {
+                                    if (resultsList[i] == context.consoles[j].console_name) {
+                                        context.consoles[j].checked = "checked";
+                                        break;
+                                    }
                                 }
+                                getGamesHelper(res, mysql, context, gamesList, resultsList[i], genresList, searchName,
+                                    interComplete, datetime);
                             }
-                            getGamesHelper(res, mysql, context, gamesList, resultsList[i], genresList, searchName, interComplete, datetime);
                         }
                     }
 
