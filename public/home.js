@@ -11,11 +11,10 @@ $(document).ready(function () {
                 data: $("#consoles").serialize(),
                 success: function (data, textStatus, results) {
                     alert(results.statusText);
-                    window.location.replace("/");
+                    window.location.reload(true);
                 },
                 error: function (results) {
                     alert(results.statusText);
-                    window.location.replace("/");
                 }
             });
         }
@@ -35,11 +34,10 @@ $(document).ready(function () {
                 data: $("#genres").serialize(),
                 success: function (data, textStatus, results) {
                     alert(results.statusText);
-                    window.location.replace("/");
+                    window.location.reload(true);
                 },
                 error: function (results) {
                     alert(results.statusText);
-                    window.location.replace("/");
                 }
             });
         }
