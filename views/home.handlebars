@@ -18,10 +18,10 @@
                     Consoles
                 </div>
                 <div class="container">
-                    <form action="/" method="POST">
+                    <form id="consoles" action="/" method="POST">
                         {{#each consoles}}
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="{{console_name}}" name="console_selection">
+                            <input class="form-check-input" type="checkbox" value="{{console_name}}" name="console_selection" {{checked}}>
                             <label class="form-check-label" for="{{console_name}}">
                                 {{console_name}}
                             </label>
@@ -31,6 +31,7 @@
                             <input class="form-control" type="text" placeholder="New Console" name="new_console">
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
+                        <button onclick="clearForm('#consoles')" type="button" class="btn btn-primary">Clear</button>
                     </form>
                 </div>
             </div>
@@ -41,10 +42,10 @@
                     Genres
                 </div>
                 <div class="container">
-                    <form action="/" method="POST">
+                    <form id="genres" action="/" method="POST">
                         {{#each genres}}
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="{{genre_ID}}" name="genre_selection">
+                            <input class="form-check-input" type="checkbox" value="{{genre_ID}}" name="genre_selection" {{checked}}>
                             <label class="form-check-label" for="{{genre_name}}">
                                 {{genre_name}}
                             </label>
@@ -54,6 +55,7 @@
                             <input class="form-control" type="text" placeholder="New Genre" name="new_genre">
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
+                        <button onclick="clearForm('#genres')" type="button" class="btn btn-primary">Clear</button>
                     </form>
                 </div>
             </div>
@@ -66,7 +68,7 @@
                 <hr class="my-4">
                 {{#if gamesList}}
                 {{#each gamesList}}
-                <p class="lead">{{name}}</p>
+                <p class="lead">{{console_name}}</p>
                 {{#if games}}
                 <table class="table table-sm">
                     <thead>

@@ -73,6 +73,7 @@ module.exports = function () {
                     }
                 });
         } else {
+            console.error(datetime, "/profile/deleteReview unauthorized");
             res.status(401).end();
         }
     });
@@ -112,39 +113,44 @@ module.exports = function () {
     });
 
     router.post("/", function (req, res) {
-        var mysql = req.app.get("mysql");
-        var inserts = [req.body.username, req.session.user_ID];
-        var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
-        console.log(datetime, "/profile", "SELECT * FROM Users WHERE user_name = ? AND user_ID != ?", inserts);
-        mysql.pool.query("SELECT * FROM Users WHERE user_name = ? AND user_ID != ?", inserts, function (error, results) {
-            if (error) {
-                console.error(datetime, "/profile", JSON.stringify(error));
-                res.statusMessage = JSON.stringify(error);
-                res.status(400).end();
-            } else {
-                if (results.length == 0) {
-                    if (req.body.console == "") {
-                        req.body.console = null;
-                    }
-                    inserts = [req.body.username, req.body.password, req.body.email, req.body.console, req.body.photo, req.session.user_ID];
-                    console.log(datetime, "/profile", "UPDATE Users SET user_name = ?, password = ?, email = ?, pref_console_ID = ?, photo = ? WHERE user_ID = ?",
-                        inserts);
-                    mysql.pool.query("UPDATE Users SET user_name = ?, password = ?, email = ?, pref_console_ID = ?, photo = ? WHERE user_ID = ?",
-                        inserts, function (error) {
-                            if (error) {
-                                console.error(datetime, "/profile", JSON.stringify(error));
-                                res.statusMessage = JSON.stringify(error);
-                                res.status(400).end();
-                            } else {
-                                res.status(200).end();
-                            }
-                        });
-                } else {
-                    res.statusMessage = "username already in use";
+        if (req.session.loggedin) {
+            var mysql = req.app.get("mysql");
+            var inserts = [req.body.username, req.session.user_ID];
+            var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+            console.log(datetime, "/profile", "SELECT * FROM Users WHERE user_name = ? AND user_ID != ?", inserts);
+            mysql.pool.query("SELECT * FROM Users WHERE user_name = ? AND user_ID != ?", inserts, function (error, results) {
+                if (error) {
+                    console.error(datetime, "/profile", JSON.stringify(error));
+                    res.statusMessage = JSON.stringify(error);
                     res.status(400).end();
+                } else {
+                    if (results.length == 0) {
+                        if (req.body.console == "") {
+                            req.body.console = null;
+                        }
+                        inserts = [req.body.username, req.body.password, req.body.email, req.body.console, req.body.photo, req.session.user_ID];
+                        console.log(datetime, "/profile", "UPDATE Users SET user_name = ?, password = ?, email = ?, pref_console_ID = ?, photo = ? WHERE user_ID = ?",
+                            inserts);
+                        mysql.pool.query("UPDATE Users SET user_name = ?, password = ?, email = ?, pref_console_ID = ?, photo = ? WHERE user_ID = ?",
+                            inserts, function (error) {
+                                if (error) {
+                                    console.error(datetime, "/profile", JSON.stringify(error));
+                                    res.statusMessage = JSON.stringify(error);
+                                    res.status(400).end();
+                                } else {
+                                    res.status(200).end();
+                                }
+                            });
+                    } else {
+                        res.statusMessage = "username already in use";
+                        res.status(400).end();
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            console.error(datetime, "/profile update unauthorized");
+            res.status(401).end();
+        }
     });
 
     return router;

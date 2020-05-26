@@ -20,24 +20,29 @@ module.exports = function () {
     });
 
     router.post("/", function (req, res) {
-        var inserts = [req.body.console_ID, req.body.game_ID, req.body.title, req.body.rating, req.body.content];
-        var date = new Date();
-        var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
-        var mysql = req.app.get("mysql");
-        inserts.push(date);
-        inserts.push(req.session.user_ID);
-        console.log(datetime, "/addReview", "INSERT INTO Reviews (console_ID, game_ID, title, rating, content, review_date, user_ID) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            inserts);
-        mysql.pool.query("INSERT INTO Reviews (console_ID, game_ID, title, rating, content, review_date, user_ID) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            inserts, function (error) {
-                if (error) {
-                    console.error(datetime, "/addReview", JSON.stringify(error));
-                    res.statusMessage = JSON.stringify(error);
-                    res.status(400).end();
-                } else {
-                    res.status(200).end();
-                }
-            });
+        if (req.session.loggedin) {
+            var inserts = [req.body.console_ID, req.body.game_ID, req.body.title, req.body.rating, req.body.content];
+            var date = new Date();
+            var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+            var mysql = req.app.get("mysql");
+            inserts.push(date);
+            inserts.push(req.session.user_ID);
+            console.log(datetime, "/addReview", "INSERT INTO Reviews (console_ID, game_ID, title, rating, content, review_date, user_ID) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                inserts);
+            mysql.pool.query("INSERT INTO Reviews (console_ID, game_ID, title, rating, content, review_date, user_ID) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                inserts, function (error) {
+                    if (error) {
+                        console.error(datetime, "/addReview", JSON.stringify(error));
+                        res.statusMessage = JSON.stringify(error);
+                        res.status(400).end();
+                    } else {
+                        res.status(200).end();
+                    }
+                });
+        } else {
+            console.error(datetime, "/addReview unauthorized");
+            res.status(401).end();
+        }
     });
 
     return router;
