@@ -3,7 +3,7 @@
         Profile
     </h1>
     {{#if photo}}
-    <img src="{{photo}}" style="width:100px;" />
+    <img src="{{photo}}" class="medium_photo" />
     {{else}}
     Pic not available
     {{/if}}
@@ -40,13 +40,13 @@
     {{#if reviews}}
     {{#each reviews}}
     <div>
-        <table class="table table-sm" style="margin-top:50px;">
+        <table class="table table-sm medium_cell" style="margin-top:50px;">
             <thead>
                 <tr>
-                    <th scope="col" style="width:200px;">Game</th>
-                    <th scope="col" style="width:200px;">Console</th>
-                    <th scope="col" style="width:200px;">Your Rating</th>
-                    <th scope="col" style="width:200px;">Review Date</th>
+                    <th scope="col">Game</th>
+                    <th scope="col">Console</th>
+                    <th scope="col">Your Rating</th>
+                    <th scope="col">Review Date</th>
                 </tr>
             </thead>
             <tbody>
@@ -64,7 +64,7 @@
         </div>
         <div class="form-group">
             <label for="summary"><strong>Summary</strong></label>
-            <textarea class="form-control" name="summary" style="background-color:white;color:black;" readonly>{{content}}</textarea>
+            <textarea class="form-control text_box" name="summary" readonly>{{content}}</textarea>
         </div>
         <button onclick="deleteReview({{review_ID}})" type="button" class="btn btn-primary">Delete</button>
     </div>

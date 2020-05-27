@@ -1,0 +1,20 @@
+.small_photo {
+    width: 50px;
+}
+
+.medium_photo {
+    width: 100px;
+}
+
+.small_cell th {
+    width: 150px;
+}
+
+.medium_cell th {
+    width: 200px;
+}
+
+.form-control.text_box {
+    background-color: white;
+    color: black;
+}

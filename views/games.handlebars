@@ -4,19 +4,19 @@
     </h1>
     <p class="lead">{{console_name}}</p>
     {{#if photo}}
-    <img src="{{photo}}" style="width:50px;" />
+    <img src="{{photo}}" class="small_photo" />
     {{else}}
     Pic not available
     {{/if}}
 
-    <table class="table table-sm">
+    <table class="table table-sm medium_cell">
         <thead>
             <tr>
-                <th scope="col" style="width:200px;">Fresh or Not?</th>
-                <th scope="col" style="width:200px;">Average Rating</th>
-                <th scope="col" style="width:200px;">Release Date</th>
-                <th scope="col" style="width:200px;">Genres</th>
-                <th scope="col" style="width:200px;">Also On</th>
+                <th scope="col">Fresh or Not?</th>
+                <th scope="col">Average Rating</th>
+                <th scope="col">Release Date</th>
+                <th scope="col">Genres</th>
+                <th scope="col">Also On</th>
             </tr>
         </thead>
         <tbody>
@@ -36,7 +36,7 @@
     </table>
     <div class="form-group">
         <label for="summary"><strong>Summary</strong></label>
-        <textarea class="form-control" name="summary" style="background-color:white;color:black;height:300px;" readonly>{{description}}</textarea>
+        <textarea class="form-control text_box" name="summary" style="height:300px;" readonly>{{description}}</textarea>
     </div>
     <button onclick="reviewCheck({{game_ID}}, {{console_ID}}, `{{game_name}}`, `{{console_name}}`)" class="btn btn-primary" type="button">Add Review</button>
     <button onclick="deleteGame({{console_ID}}, {{game_ID}})" class="btn btn-primary" type="button">Delete Game</button>
@@ -47,12 +47,12 @@
         <h2>Reviews</h2>
         {{#if reviews}}
         {{#each reviews}}
-        <table class="table table-sm" style="margin-top:50px;">
+        <table class="table table-sm small_cell" style="margin-top:50px;">
             <thead>
                 <tr>
-                    <th scope="col" style="width:150px;">User</th>
-                    <th scope="col" style="width:150px;">User Rating</th>
-                    <th scope="col" style="width:150px;">Review Date</th>
+                    <th scope="col">User</th>
+                    <th scope="col">User Rating</th>
+                    <th scope="col">Review Date</th>
                 </tr>
             </thead>
             <tbody>
@@ -65,11 +65,11 @@
         </table>
         <div class="form-group">
             <label for="title"><strong>Review Title</strong></label>
-            <input class="form-control" type="text" name="title" style="background-color:white;color:black;" value="{{title}}" readonly />
+            <input class="form-control text_box" type="text" name="title" value="{{title}}" readonly />
         </div>
         <div class="form-group">
             <label for="summary"><strong>Summary</strong></label>
-            <textarea class="form-control" name="summary" style="background-color:white;color:black;height:150px;" readonly>{{content}}</textarea>
+            <textarea class="form-control text_box" name="summary" style="height:150px;" readonly>{{content}}</textarea>
         </div>
         {{/each}}
         {{else}}
