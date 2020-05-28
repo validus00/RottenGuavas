@@ -24,15 +24,15 @@ git update-index --assume-unchanged dbcon.js
 **2. Run the server**
   - Run Node
 ```
-node main.js {your port number}
+node app.js {your port number}
 ```
 **3. To run forever**
   - Run Node with forever
 ```
-./node_modules/forever/bin/forever start main.js {your port number}
+./node_modules/forever/bin/forever start app.js {your port number}
 ```
 **4. To stop your server after running forever**
-  - Find your process ID(s) (find the command that ends with "/forever/bin/monitor main.js" and the command with "main.js {your port number}"
+  - Find your process ID(s) (find the command that ends with "/forever/bin/monitor app.js" and the command with "app.js {your port number}"
 ```
 ps aux | grep {your user name}
 ```
