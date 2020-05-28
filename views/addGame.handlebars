@@ -3,8 +3,15 @@
 
     <!-- Add Game Section -->
     <div class="jumbotron">
-        <h1 class="display-4">ADD GAME</h1>
-        <hr class="my-4">
+        <h1 class="display-4">
+            ADD GAME
+        </h1>
+        <p class="lead">
+            Add a new game to the database. 
+            <br>If the game already exists in the database, new genres and/or consoles can be associated with the game.</br>
+        </p>
+        {{!-- Horizontal row --}}
+        <hr class="my-4"> 
 
         <!-- Add Game Form -->
         <form id="addGame" action="/addGame" method="POST">
