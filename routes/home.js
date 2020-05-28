@@ -165,7 +165,7 @@ module.exports = function () {
                     }
                 });
             } else {
-                res.statusMessage = name + " already exists";
+                res.statusMessage = "'" + results[0].console_name + "' already exists";
                 res.status(400).end();
             }
         });
@@ -191,7 +191,7 @@ module.exports = function () {
                     }
                 });
             } else {
-                res.statusMessage = name + " already exists";
+                res.statusMessage = "'" + results[0].genre_name + "' already exists";
                 res.status(400).end();
             }
         });

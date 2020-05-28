@@ -317,7 +317,7 @@ module.exports = function () {
 
                     // Game_name already exists so check Consoles_Games and Genres_Games relationships 
                     else {
-                        res.statusMessage += "Game '" + req.body.game_name + "' already exists.\\n";
+                        res.statusMessage += "Game '" + results[0].game_name + "' already exists.\\n";
                         getGameID(req, res, mysql, context, results[0].game_name, complete);
                     }
                 }
