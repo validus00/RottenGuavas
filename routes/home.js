@@ -8,7 +8,7 @@ module.exports = function () {
             + " JOIN Consoles ON Consoles_Games.console_ID = Consoles.console_ID"
             + " LEFT JOIN Reviews ON Consoles.console_ID = Reviews.console_ID AND Games.game_ID = Reviews.game_ID";
         if (searchName) {
-            var inserts = [console_name, searchName];
+            var inserts = [console_name, "%" + searchName + "%"];
             console.log(datetime, "/", sql + " WHERE console_name = ? AND game_name LIKE ? GROUP BY game_name ORDER BY rating DESC",
                 inserts);
             mysql.pool.query(sql + " WHERE console_name = ? AND game_name LIKE ? GROUP BY game_name ORDER BY rating DESC",
@@ -68,11 +68,11 @@ module.exports = function () {
                 context.genres = results;
                 if (searchName) {
                     console.log(datetime, "/", "SELECT Consoles.console_ID, console_name FROM Consoles JOIN Consoles_Games ON Consoles.console_ID"
-                        + " = Consoles_Games.console_ID JOIN Games ON Consoles_Games.game_ID = Games.game_ID WHERE game_name LIKE ?",
-                        searchName);
+                        + " = Consoles_Games.console_ID JOIN Games ON Consoles_Games.game_ID = Games.game_ID WHERE game_name LIKE ? GROUP BY console_name",
+                        "%" + searchName + "%");
                     mysql.pool.query("SELECT Consoles.console_ID, console_name FROM Consoles JOIN Consoles_Games ON Consoles.console_ID ="
-                        + " Consoles_Games.console_ID JOIN Games ON Consoles_Games.game_ID = Games.game_ID WHERE game_name LIKE ?",
-                        searchName, helper);
+                        + " Consoles_Games.console_ID JOIN Games ON Consoles_Games.game_ID = Games.game_ID WHERE game_name LIKE ? GROUP BY console_name",
+                        "%" + searchName + "%", helper);
                 } else if (genresList.length > 0) {
                     var inserts = [];
                     var genreStr = "SELECT Consoles.console_ID, console_name FROM Consoles JOIN Consoles_Games"
