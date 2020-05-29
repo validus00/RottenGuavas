@@ -8,7 +8,7 @@ $(document).ready(function () {
             success: function(data, textStatus, results){ 
                 alert(results.statusText.replace(/\\n/g,"\n"));
                 // alert(textStatus);
-                window.location.replace("/");
+                window.location.replace("/?showAll=True");
             },
             error: function (results) {
                 alert(results.statusText);

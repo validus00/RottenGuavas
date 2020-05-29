@@ -65,8 +65,18 @@
         <div class="col-9">
             <div class="jumbotron">
                 <h1 class="display-4">GAMES</h1>
-                <a href="/">Show top games</a>
-                <a href="/?showAll=True">Show all games</a>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox"
+                           onchange="if (this.checked) document.location.href = '/'; else document.location.href = '/?showAll=True';"
+                           {{#if showTop}} checked {{/if}}>
+                    <label class="form-check-label">Show Top Games</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox"
+                           onchange="if (this.checked) document.location.href = '/?showAll=True'; else document.location.href = '/';"
+                           {{#if showAll}} checked {{/if}}>
+                    <label class="form-check-label">Show All Games</label>
+                </div>
                 <hr class="my-4">
                 {{#if gamesList}}
                 {{#each gamesList}}

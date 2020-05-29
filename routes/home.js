@@ -225,8 +225,10 @@ module.exports = function () {
         var mysql = req.app.get("mysql");
         if (req.query.showAll == "True") {
             getGames(res, mysql, context, complete, [], [], null, datetime, true);
+            context.showAll = true;
         } else {
             getGames(res, mysql, context, complete, [], [], null, datetime, false);
+            context.showTop = true;
         }
 
         function complete() {

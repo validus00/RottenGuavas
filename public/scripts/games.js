@@ -20,7 +20,7 @@ function deleteGame(console_ID, game_ID) {
             type: "DELETE",
             success: function () {
                 alert("game deleted");
-                window.location.replace("/");
+                window.location.replace("/?showAll=True");
             },
             error: function (results) {
                 alert(results.statusText);
