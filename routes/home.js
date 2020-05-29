@@ -3,7 +3,7 @@ module.exports = function () {
     var router = express.Router();
 
     function getGamesHelper(res, mysql, context, gamesList, console_name, genresList, searchName, complete, datetime, showAll) {
-        var sql = "SELECT Games.game_ID, game_name, AVG(rating) AS rating FROM Games"
+        var sql = "SELECT Consoles.console_ID, Games.game_ID, game_name, AVG(rating) AS rating FROM Games"
             + " JOIN Consoles_Games ON Games.game_ID = Consoles_Games.game_ID"
             + " JOIN Consoles ON Consoles_Games.console_ID = Consoles.console_ID"
             + " LEFT JOIN Reviews ON Consoles.console_ID = Reviews.console_ID AND Games.game_ID = Reviews.game_ID";
@@ -29,7 +29,7 @@ module.exports = function () {
             console.log(datetime, "/", sql, console_name);
             mysql.pool.query(sql, console_name, helper);
         } else {
-            sql = "SELECT Games.game_ID, game_name, AVG(rating) AS rating FROM Reviews"
+            sql = "SELECT Consoles.console_ID, Games.game_ID, game_name, AVG(rating) AS rating FROM Reviews"
                 + " JOIN Games ON Reviews.game_ID = Games.game_ID JOIN Consoles ON Reviews.console_ID = Consoles.console_ID"
                 + " WHERE console_name = ? GROUP BY game_name ORDER BY rating DESC";
             console.log(datetime, "/", sql, console_name);
