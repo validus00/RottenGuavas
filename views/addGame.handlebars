@@ -1,66 +1,90 @@
-<!-- WEBPAGE BODY -->
-<div class="container">
-
-    <!-- Add Game Section -->
-    <div class="jumbotron">
-        <h1 class="display-4">
-            ADD GAME
-        </h1>
-        <p class="lead">
-            Add a new game to the database. 
-            <br>If the game already exists in the database, new genres and/or consoles can be associated with the game.</br>
-        </p>
-        {{!-- Horizontal row --}}
-        <hr class="my-4"> 
-
-        <!-- Add Game Form -->
-        <form id="addGame" action="/addGame" method="POST">
-            <div class="form-group">
-                <label for="game_name">Game Name:</label>
-                <input type="text" name="game_name" placeholder="Game Name" required>
-            </div>
-            <div class="form-group">
-                <label for="release_date">Release Date:</label>
-                <input type="date" name="release_date" required>
-            </div>
-
-            <!-- Consoles checkboxes form-->
-            <div class="form-group">
-                <label for="console_name">Console(s):</label>
-                {{#each consoles}}
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="{{console_ID}}" name="console_selection">
-                    <label class="form-check-label" for="{{console_name}}">
-                        {{console_name}}
-                    </label>
+<!-- Add Game Container -->
+<div class="container pt-5">
+    <div class="row">
+        <div class="col-sm-1">
+        </div>
+        <div class="col-sm-10">
+            <div class="card bg-dark text-white border-white">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        Add Game
+                    </h4>
+                    <h6 class="card-subtitl mb-2 text-warning">
+                       Add a new game to the database. 
+                       <p>If the game already exists in the database, new genres and/or consoles can be associated with the game.</p> 
+                    </h6>
                 </div>
-                {{/each}}
-            </div>
 
-            <!-- Genres checkboxes form-->
-            <div class="form-group">
-                <label for="genre_name">Genre(s):</label>
-                {{#each genres}}
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="{{genre_ID}}" name="genre_selection">
-                    <label class="form-check-label" for="{{genre_name}}">
-                        {{genre_name}}
-                    </label>
-                </div>
-                {{/each}}
-            </div>
+                <!-- Add Game Form -->
+                <form id="addGame" action="/addGame" method="POST" class="card-body">
+                    <div class="form-group">
+                        <label for="game_name">
+                            Game Name
+                        </label>
+                        <input type="text" name="game_name" placeholder="Game Name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="release_date">
+                            Release Date
+                        </label>
+                        <input type="date" name="release_date" class="form-control" required>
+                    </div>
 
-            <div class="form-group">
-                <label for="description">Description:</label>
-                <textarea class="form-control" rows="5" name="description"></textarea>
-            </div>
+                    <!-- Consoles checkboxes form-->
+                    <div class="form-group">
+                        <label for="console_name">
+                            Console(s):
+                        </label>
+                        {{#each consoles}}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="{{console_ID}}" name="console_selection">
+                            <label class="form-check-label" for="{{console_name}}">
+                                {{console_name}}
+                            </label>
+                        </div>
+                        {{/each}}
+                    </div>
 
-            <div class="form-group">
-                <label for="photo">Game Image (url):</label>
-                <input type="text" name="photo" placeholder="photo" value="{{photo}}">
+                    <!-- Genres checkboxes form-->
+                    <div class="form-group">
+                        <label for="genre_name">
+                            Genre(s):
+                        </label>
+                        {{#each genres}}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="{{genre_ID}}" name="genre_selection">
+                            <label class="form-check-label" for="{{genre_name}}">
+                                {{genre_name}}
+                            </label>
+                        </div>
+                        {{/each}}
+                    </div>
+
+                    {{!-- Game description --}}
+                    <div class="form-group">
+                        <label for="description">
+                            Game Description
+                        </label>
+                        <textarea class="form-control" rows="5" name="description" class="form-control"></textarea>
+                    </div>
+
+                    {{!-- Game photo url --}}
+                    <div class="form-group">
+                        <label for="photo">
+                            Game Image (url)
+                        </label>
+                        <input type="text" name="photo" placeholder="https://..." value="{{photo}}" class="form-control">
+                    </div>
+            
+                    {{!-- Submit buttons --}}
+                    <div class="form-group text-center pt-3">
+                        <button type="submit" class="btn btn-success">
+                            Submit
+                        </button>
+                        <button onclick="location.href='/?showAll=True'" type="button" class="btn btn-success">Cancel</button>
+                    </div>
+                </form>
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-            <button onclick="location.href='/?showAll=True'" type="button" class="btn btn-primary">Cancel</button>
-        </form>
+        </div>
     </div>
 </div>

@@ -4,7 +4,7 @@
             <div class="col-3">
 
                 <!-- Search bar -->
-                <div class="card p-3 mb-2 bg-dark text-white">
+                <div class="card p-3 mb-2 bg-dark text-white border-secondary">
                     <div class="container">
                         <form class="form-inline" action="/" method="POST">
                             <input class="form-control-sm mr-3 w-85" type="search" placeholder="Search Game Name" aria-label="Search">
@@ -16,7 +16,7 @@
                 </div>
 
                 <!-- Consoles checkboxes form-->
-                <div class="card p-3 mb-2 bg-dark text-white">
+                <div class="card p-3 mb-2 bg-dark text-white border-secondary">
                     <div class="card-header">
                         Filter by Console
                     </div>
@@ -40,7 +40,7 @@
                 </div>
 
                 <!-- Genres checkboxes form-->
-                <div class="card p-3 mb-2 bg-dark text-white">
+                <div class="card p-3 mb-2 bg-dark text-white border-secondary">
                     <div class="card-header">
                         Filter by Genre
                     </div>
@@ -80,7 +80,7 @@
                             {{#if showAll}} checked {{/if}}>
                         <label class="form-check-label">Show All Games</label>
                     </div>
-                    <hr class="my-4">
+                    <hr class="my-4 border-secondary">
                     {{#if gamesList}}
                     {{#each gamesList}}
                     <p class="lead">{{console_name}}</p>

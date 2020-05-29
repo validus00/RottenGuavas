@@ -19,75 +19,131 @@
                 {{formatDate release_date}}
             </p>
 
-            {{!-- Game photo --}}
-            {{#if photo}}
-            <img src="{{photo}}" class="game_photo" />
-            {{else}}
-            Pic not available
-            {{/if}}
+            {{!-- Game Info --}}
+            <div class="row">
 
-            <table class="table table-sm medium_cell">
-                <thead>
-                    <tr>
-                        <th scope="col">Fresh or Not?</th>
-                        <th scope="col">Average Rating</th>
-                        <th scope="col">Release Date</th>
-                        <th scope="col">Genres</th>
-                        <th scope="col">Also On</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        {{#if rating includeZero=true}}
-                        <td>{{{freshOrNot rating}}}</td>
-                        <td>{{toFixed rating}}</td>
-                        {{else}}
-                        <td></td>
-                        <td>No reviews yet</td>
-                        {{/if}}
-                        {{!-- <td>{{formatDate release_date}}</td> --}}
-                        <td>{{genresList}}</td>
-                        <td>{{{consolesList}}}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="form-group">
-                <label for="summary"><strong>Summary</strong></label>
-                <textarea class="form-control text_box" name="summary" style="height:300px;" readonly>{{description}}</textarea>
+                {{!-- Game photo --}}
+                <div class="col-2">
+                    {{#if photo}}
+                    <img src="{{photo}}" class="game_photo" />
+                    {{else}}
+                    Pic not available
+                    {{/if}}
+                </div>
+
+                {{!-- Game Rotten/not, rating, Summary --}}
+                <div class="col-7">
+                    <table class="table table-sm table-borderless text-white">
+                        <thead>
+                            <tr>
+                                <th scope="col">Fresh or Not?</th>
+                                <th scope="col">Average Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                {{#if rating includeZero=true}}
+                                <td>{{{freshOrNot rating}}}</td>
+                                <td>{{toFixed rating}}</td>
+                                {{else}}
+                                <td></td>
+                                <td>No reviews yet</td>
+                                {{/if}}
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>
+                        <strong>
+                            Summary:
+                        </strong>
+                       {{description}} 
+                    </p>
+                </div>
+
+                {{!-- Genres and other Console(s) --}}
+                <div class="col-3">
+                    <p>
+                        <strong>
+                            Genres:
+                        </strong>
+                       {{genresList}} 
+                    </p>
+                    <p>
+                        <strong>
+                            Also on: 
+                        </strong>
+                       {{{consolesList}}} 
+                    </p>
+                </div>
+
+                {{!-- Button to delete game --}}
+                <button onclick="deleteGame({{console_ID}}, {{game_ID}})" class="btn btn-success" type="button">
+                    Delete Game
+                </button>
             </div>
-            <button onclick="reviewCheck({{game_ID}}, {{console_ID}}, `{{game_name}}`, `{{console_name}}`)" class="btn btn-primary" type="button">Add Review</button>
-            <button onclick="deleteGame({{console_ID}}, {{game_ID}})" class="btn btn-primary" type="button">Delete Game</button>
+        </div>
+    </div>
+</div>
 
-            <hr class="my-4">
+{{!-- Horizontal line --}}
+<hr class="my-4">
 
-            <div>
-                <h2>Reviews</h2>
+{{!-- Reviews --}}
+<div class="container">
+    <div class="card">
+        <div class="bg-dark">
+            <div class="jumbotron p-3 mb-2 bg-dark text-white">
+
+                {{!-- Reviews header and Add Review Button --}}
+                <div class="row">
+                    <div class="col-6">
+                        <h1 class="text-left display-4">
+                            Reviews
+                        </h1>
+                    </div>
+                    <div class="col-6 text-right">
+                        <button onclick="reviewCheck({{game_ID}}, {{console_ID}}, `{{game_name}}`, `{{console_name}}`)" class="btn btn-success" type="button">
+                            Add Review
+                        </button>
+                    </div>
+                </div>
+                <p></p>
+
+                {{!-- Each review --}}
                 {{#if reviews}}
-                {{#each reviews}}
-                <table class="table table-sm small_cell" style="margin-top:50px;">
-                    <thead>
-                        <tr>
-                            <th scope="col">User</th>
-                            <th scope="col">User Rating</th>
-                            <th scope="col">Review Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>{{user_name}}</td>
-                            <td>{{toFixed rating}}</td>
-                            <td>{{formatDate review_date}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="form-group">
-                    <label for="title"><strong>Review Title</strong></label>
-                    <input class="form-control text_box" type="text" name="title" value="{{title}}" readonly />
+                {{#each reviews}} 
+                <div class="card">
+                    <div class="bg-dark text-white">
+                        <div class="card-title">
+                            <div class="container">
+                                <div class="row text-center">
+                                    <div class="col-1 bg-success text-center">
+                                    {{toFixed rating}} 
+                                    </div>
+                                    <div class="col-2">
+                                    {{user_name}} 
+                                    </div>
+                                    <div>
+                                    {{formatDate review_date}} 
+                                    </div>
+                                    <div class="col-7">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">
+                                <strong>
+                                {{title}} 
+                                </strong>
+                            </div>
+                            <div class="card-text">
+                                {{content}} 
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="summary"><strong>Summary</strong></label>
-                    <textarea class="form-control text_box" name="summary" style="height:150px;" readonly>{{content}}</textarea>
-                </div>
+                <p></p>
                 {{/each}}
                 {{else}}
                 No reviews yet

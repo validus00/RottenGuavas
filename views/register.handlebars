@@ -1,9 +1,64 @@
-<div class="container-fluid">
-    <h1>
-        Sign Up!
-    </h1>
+<div class="container pt-5">
+    <div class="row">
+        <div class="col-sm-3">
+        </div>
+        <div class="col-sm-6"> 
+            <div class="card bg-dark text-white border-white">
+                    <div class="card-header">
+                        <h4>
+                            Sign Up
+                        </h4>
+                    </div>
+                    <form id="register" action="/register" method="POST" class="card-body">
+                        <div class="form-group">
+                            <label for="username">
+                                Username
+                            </label>
+                            <input type="text" name="username" placeholder="Username" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">
+                                Password
+                            </label>
+                            <input type="password" name="password" placeholder="Password" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">
+                                E-mail
+                            </label>
+                            <input type="email" name="email" placeholder="E-mail" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="console">
+                                Preferred Console
+                            </label>
+                            <select id="console" name="console" class="form-control">
+                                {{#each options}}
+                                    <option value="{{console_ID}}">
+                                        {{console_name}}
+                                    </option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="photo">
+                                URL to your photo
+                            </label>
+                            <input type="text" name="photo" placeholder="https://..." value="{{photo}}" class="form-control">
+                        </div>
+                        <div class="form-group text-center pt-3">
+                            <button type="submit" class="btn btn-success">Sign Up</button>
+                            <button onclick="location.href='/'" type="button" class="btn btn-success">Cancel</button>
+                        </div>
+                    </form>
+            </div>
+        </div>
+        <div class="col-sm-3">
+        </div> 
+    </div>
+</div>>
 
-    <form id="register" action="/register" method="POST">
+    {{!-- <form id="register" action="/register" method="POST">
         <div class="form-group">
             <label for="username">Username:</label>
             <input type="text" name="username" placeholder="username" required>
@@ -31,4 +86,4 @@
         <button type="submit" class="btn btn-primary">Sign Up!</button>
         <button onclick="location.href='/'" type="button" class="btn btn-primary">Cancel</button>
     </form>
-</div>
+</div> --}}

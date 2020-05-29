@@ -9,11 +9,11 @@ ORDER BY genre_name ASC;
 SELECT console_name FROM Consoles JOIN Reviews
 ON Consoles.console_ID = Reviews.console_ID GROUP BY console_name;
 --		then show games of consoles through a for-loop on console_name
-SELECT Consoles.console_ID, Games.game_ID, game_name, AVG(rating) AS rating FROM Reviews
+SELECT Games.game_ID, game_name, AVG(rating) AS rating FROM Reviews
 JOIN Games ON Reviews.game_ID = Games.game_ID JOIN Consoles ON Reviews.console_ID = Consoles.console_ID
 WHERE console_name = ? GROUP BY game_name ORDER BY rating DESC;
 --		Load all games tables is done through a for-loop on console_name
-SELECT Consoles.console_ID, Games.game_ID, game_name, AVG(rating) AS rating FROM Games
+SELECT Games.game_ID, game_name, AVG(rating) AS rating FROM Games
 JOIN Consoles_Games ON Games.game_ID = Consoles_Games.game_ID
 JOIN Consoles ON Consoles_Games.console_ID = Consoles.console_ID
 LEFT JOIN Reviews ON Consoles.console_ID = Reviews.console_ID AND Games.game_ID = Reviews.game_ID
@@ -26,13 +26,13 @@ JOIN Consoles_Games ON Consoles.console_ID = Consoles_Games.console_ID
 JOIN Games ON Consoles_Games.game_ID = Games.game_ID
 WHERE game_name LIKE "%Yakuza 0%" GROUP BY console_name;
 -- then for each entry, make query for that game. For example, for console_name = PS4, do:
-SELECT Consoles.console_ID, Games.game_ID, game_name, AVG(rating) AS rating FROM Games
+SELECT Games.game_ID, game_name, AVG(rating) AS rating FROM Games
 JOIN Consoles_Games ON Games.game_ID = Consoles_Games.game_ID
 JOIN Consoles ON Consoles_Games.console_ID = Consoles.console_ID
 LEFT JOIN Reviews ON Consoles.console_ID = Reviews.console_ID AND Games.game_ID = Reviews.game_ID
 WHERE console_name = "PS4" AND game_name LIKE "%Yakuza 0%" GROUP BY game_name ORDER BY rating DESC;
 -- for console_ID = Switch, do:
-SELECT Consoles.console_ID, Games.game_ID, game_name, AVG(rating) AS rating FROM Games
+SELECT Games.game_ID, game_name, AVG(rating) AS rating FROM Games
 JOIN Consoles_Games ON Games.game_ID = Consoles_Games.game_ID
 JOIN Consoles ON Consoles_Games.console_ID = Consoles.console_ID
 LEFT JOIN Reviews ON Consoles.console_ID = Reviews.console_ID AND Games.game_ID = Reviews.game_ID
@@ -42,7 +42,7 @@ WHERE console_name = "Switch" AND game_name LIKE "%Yakuza 0%" GROUP BY game_name
 -- 3. Index filtered by Consoles in sidebar
 --		Depending on submitted form and which console_name are selected
 --		Loading all games tables is done through a for-loop on console_name
-SELECT Consoles.console_ID, Games.game_ID, game_name, AVG(rating) AS rating FROM Games
+SELECT Games.game_ID, game_name, AVG(rating) AS rating FROM Games
 JOIN Consoles_Games ON Games.game_ID = Consoles_Games.game_ID
 JOIN Consoles ON Consoles_Games.console_ID = Consoles.console_ID
 LEFT JOIN Reviews ON Consoles.console_ID = Reviews.console_ID AND Games.game_ID = Reviews.game_ID
@@ -57,7 +57,7 @@ ON Consoles.console_ID = Consoles_Games.console_ID JOIN Games ON Consoles_Games.
 JOIN Genres_Games ON Games.game_ID = Genres_Games.game_ID
 WHERE (genre_ID = :genre_ID OR genre_ID = :genre_ID) GROUP BY console_name ORDER BY console_ID;
 --		Loading all games tables is done through a for-loop on console_name and genre_ID combinations
-SELECT Consoles.console_ID, Games.game_ID, game_name, AVG(rating) AS rating FROM Games
+SELECT Games.game_ID, game_name, AVG(rating) AS rating FROM Games
 JOIN Consoles_Games ON Games.game_ID = Consoles_Games.game_ID
 JOIN Consoles ON Consoles_Games.console_ID = Consoles.console_ID
 LEFT JOIN Reviews ON Consoles.console_ID = Reviews.console_ID AND Games.game_ID = Reviews.game_ID
