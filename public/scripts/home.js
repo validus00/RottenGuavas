@@ -47,4 +47,4 @@ $(document).ready(function () {
 function clearForm(form) {
     $(form).find("input[type=checkbox]").prop("checked", false);
     $(form).find("input[type=text]").val("");
-};
+}

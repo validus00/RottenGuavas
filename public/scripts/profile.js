@@ -31,4 +31,4 @@ function deleteReview(review_ID) {
             }
         })
     }
-};
+}

@@ -3,8 +3,9 @@ module.exports = function () {
     var router = express.Router();
 
     function getConsoles(res, mysql, context, complete, datetime) {
-        console.log(datetime, "/profile", "SELECT console_ID, console_name FROM Consoles ORDER BY console_ID");
-        mysql.pool.query("SELECT console_ID, console_name FROM Consoles ORDER BY console_ID", function (error, results) {
+        var sql = "SELECT console_ID, console_name FROM Consoles ORDER BY console_ID";
+        console.log(datetime, "/profile", sql);
+        mysql.pool.query(sql, function (error, results) {
             if (error) {
                 console.error(datetime, "/profile", JSON.stringify(error));
                 res.write(JSON.stringify(error));
@@ -16,8 +17,9 @@ module.exports = function () {
     }
 
     function getUser(req, res, mysql, context, complete, datetime) {
-        console.log(datetime, "/profile", "SELECT * FROM Users WHERE user_ID = ?", req.session.user_ID);
-        mysql.pool.query("SELECT * FROM Users WHERE user_ID = ?", req.session.user_ID,
+        var sql = "SELECT * FROM Users WHERE user_ID = ?";
+        console.log(datetime, "/profile", sql, req.session.user_ID);
+        mysql.pool.query(sql, req.session.user_ID,
             function (error, results) {
                 if (error) {
                     console.error(datetime, "/profile", JSON.stringify(error));
@@ -39,12 +41,11 @@ module.exports = function () {
     }
 
     function getUserReviews(req, res, mysql, context, complete, datetime) {
-        console.log(datetime, "/profile", "SELECT review_ID, game_name, console_name, rating, review_date, title, content FROM Reviews"
+        var sql = "SELECT review_ID, game_name, console_name, rating, review_date, title, content FROM Reviews"
             + " JOIN Games ON Reviews.game_ID = Games.game_ID JOIN Consoles ON Reviews.console_ID = Consoles.console_ID"
-            + " WHERE user_ID = ?", req.session.user_ID);
-        mysql.pool.query("SELECT review_ID, game_name, console_name, rating, review_date, title, content FROM Reviews"
-            + " JOIN Games ON Reviews.game_ID = Games.game_ID JOIN Consoles ON Reviews.console_ID = Consoles.console_ID"
-            + " WHERE user_ID = ?", req.session.user_ID, function (error, results) {
+            + " WHERE user_ID = ?";
+        console.log(datetime, "/profile", sql, req.session.user_ID);
+        mysql.pool.query(sql, req.session.user_ID, function (error, results) {
                 if (error) {
                     console.error(datetime, "/profile", JSON.stringify(error));
                     res.write(JSON.stringify(error));
@@ -60,10 +61,9 @@ module.exports = function () {
             var mysql = req.app.get("mysql");
             var inserts = [req.query.review_ID, req.session.user_ID];
             var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
-            console.log(datetime, "/profile", "DELETE FROM Reviews WHERE review_ID = ? AND user_ID = ?",
-                inserts);
-            mysql.pool.query("DELETE FROM Reviews WHERE review_ID = ? AND user_ID = ?",
-                inserts, function (error) {
+            var sql = "DELETE FROM Reviews WHERE review_ID = ? AND user_ID = ?";
+            console.log(datetime, "/profile", sql, inserts);
+            mysql.pool.query(sql, inserts, function (error) {
                     if (error) {
                         console.error(datetime, "/profile", JSON.stringify(error));
                         res.statusMessage = JSON.stringify(error);
@@ -117,8 +117,9 @@ module.exports = function () {
             var mysql = req.app.get("mysql");
             var inserts = [req.body.username, req.session.user_ID];
             var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
-            console.log(datetime, "/profile", "SELECT * FROM Users WHERE user_name = ? AND user_ID != ?", inserts);
-            mysql.pool.query("SELECT * FROM Users WHERE user_name = ? AND user_ID != ?", inserts, function (error, results) {
+            var sql = "SELECT * FROM Users WHERE user_name = ? AND user_ID != ?";
+            console.log(datetime, "/profile", sql, inserts);
+            mysql.pool.query(sql, inserts, function (error, results) {
                 if (error) {
                     console.error(datetime, "/profile", JSON.stringify(error));
                     res.statusMessage = JSON.stringify(error);
@@ -129,10 +130,9 @@ module.exports = function () {
                             req.body.console = null;
                         }
                         inserts = [req.body.username, req.body.password, req.body.email, req.body.console, req.body.photo, req.session.user_ID];
-                        console.log(datetime, "/profile", "UPDATE Users SET user_name = ?, password = ?, email = ?, pref_console_ID = ?, photo = ? WHERE user_ID = ?",
-                            inserts);
-                        mysql.pool.query("UPDATE Users SET user_name = ?, password = ?, email = ?, pref_console_ID = ?, photo = ? WHERE user_ID = ?",
-                            inserts, function (error) {
+                        sql = "UPDATE Users SET user_name = ?, password = ?, email = ?, pref_console_ID = ?, photo = ? WHERE user_ID = ?";
+                        console.log(datetime, "/profile", sql, inserts);
+                        mysql.pool.query(sql, inserts, function (error) {
                                 if (error) {
                                     console.error(datetime, "/profile", JSON.stringify(error));
                                     res.statusMessage = JSON.stringify(error);

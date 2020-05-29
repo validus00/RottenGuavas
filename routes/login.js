@@ -12,8 +12,9 @@ module.exports = function () {
         var mysql = req.app.get("mysql");
         var inserts = [req.body.username, req.body.password];
         var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
-        console.log(datetime, "/login", "SELECT * FROM Users WHERE user_name = ? AND password = ?", inserts);
-        mysql.pool.query("SELECT * FROM Users WHERE user_name = ? AND password = ?", inserts,
+        var sql = "SELECT * FROM Users WHERE user_name = ? AND password = ?";
+        console.log(datetime, "/login", sql, inserts);
+        mysql.pool.query(sql, inserts,
             function (error, results) {
                 if (error) {
                     console.error(datetime, "/login", JSON.stringify(error));

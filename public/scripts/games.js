@@ -10,7 +10,7 @@ function reviewCheck(game_ID, console_ID, game_name, console_name) {
             alert("login or sign up first");
         }
     })
-};
+}
 
 function deleteGame(console_ID, game_ID) {
     var confirmation = confirm("delete game?");
@@ -27,4 +27,4 @@ function deleteGame(console_ID, game_ID) {
             }
         })
     }
-};
+}

@@ -27,10 +27,9 @@ module.exports = function () {
             var mysql = req.app.get("mysql");
             inserts.push(date);
             inserts.push(req.session.user_ID);
-            console.log(datetime, "/addReview", "INSERT INTO Reviews (console_ID, game_ID, title, rating, content, review_date, user_ID) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                inserts);
-            mysql.pool.query("INSERT INTO Reviews (console_ID, game_ID, title, rating, content, review_date, user_ID) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                inserts, function (error) {
+            var sql = "INSERT INTO Reviews (console_ID, game_ID, title, rating, content, review_date, user_ID) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            console.log(datetime, "/addReview", sql, inserts);
+            mysql.pool.query(sql, inserts, function (error) {
                     if (error) {
                         console.error(datetime, "/addReview", JSON.stringify(error));
                         res.statusMessage = JSON.stringify(error);

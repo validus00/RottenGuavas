@@ -3,14 +3,12 @@ module.exports = function () {
     var router = express.Router();
 
     function getGameConsoles(res, mysql, context, complete, game_ID, console_ID, datetime) {
-        console.log(datetime, "/games", "SELECT Consoles.console_ID, console_name FROM Consoles"
+        var sql = "SELECT Consoles.console_ID, console_name FROM Consoles"
             + " JOIN Consoles_Games ON Consoles.console_ID = Consoles_Games.console_ID"
             + " JOIN Games ON Consoles_Games.game_ID = Games.game_ID"
-            + " WHERE Games.game_ID = ?", game_ID);
-        mysql.pool.query("SELECT Consoles.console_ID, console_name FROM Consoles"
-            + " JOIN Consoles_Games ON Consoles.console_ID = Consoles_Games.console_ID"
-            + " JOIN Games ON Consoles_Games.game_ID = Games.game_ID"
-            + " WHERE Games.game_ID = ?", game_ID, function (error, results) {
+            + " WHERE Games.game_ID = ?";
+        console.log(datetime, "/games", sql, game_ID);
+        mysql.pool.query(sql, game_ID, function (error, results) {
                 if (error) {
                     console.error(datetime, "/games", JSON.stringify(error));
                     res.write(JSON.stringify(error));
@@ -33,12 +31,10 @@ module.exports = function () {
 
     function getGameReviews(res, mysql, context, complete, game_ID, console_ID, datetime) {
         var inserts = [game_ID, console_ID];
-        console.log(datetime, "/games", "SELECT user_name, rating, review_date, title, content FROM Reviews"
-            + " JOIN Users ON Reviews.user_ID = Users.user_ID WHERE game_ID = ? AND console_ID = ?",
-            inserts);
-        mysql.pool.query("SELECT user_name, rating, review_date, title, content FROM Reviews"
-            + " JOIN Users ON Reviews.user_ID = Users.user_ID WHERE game_ID = ? AND console_ID = ?",
-            inserts, function (error, results) {
+        var sql = "SELECT user_name, rating, review_date, title, content FROM Reviews"
+            + " JOIN Users ON Reviews.user_ID = Users.user_ID WHERE game_ID = ? AND console_ID = ?";
+        console.log(datetime, "/games", sql, inserts);
+        mysql.pool.query(sql, inserts, function (error, results) {
                 if (error) {
                     console.error(datetime, "/games", JSON.stringify(error));
                     res.write(JSON.stringify(error));
@@ -50,12 +46,10 @@ module.exports = function () {
     }
 
     function getGameGenres(res, mysql, context, complete, game_ID, datetime) {
-        console.log(datetime, "/games", "SELECT genre_name FROM Genres JOIN Genres_Games ON Genres.genre_ID = Genres_Games.genre_ID"
-            + " JOIN Games ON Genres_Games.game_ID = Games.game_ID WHERE Games.game_ID = ?",
-            game_ID);
-        mysql.pool.query("SELECT genre_name FROM Genres JOIN Genres_Games ON Genres.genre_ID = Genres_Games.genre_ID"
-            + " JOIN Games ON Genres_Games.game_ID = Games.game_ID WHERE Games.game_ID = ?",
-            game_ID, function (error, results) {
+        var sql = "SELECT genre_name FROM Genres JOIN Genres_Games ON Genres.genre_ID = Genres_Games.genre_ID"
+            + " JOIN Games ON Genres_Games.game_ID = Games.game_ID WHERE Games.game_ID = ?";
+        console.log(datetime, "/games", sql, game_ID);
+        mysql.pool.query(sql, game_ID, function (error, results) {
                 if (error) {
                     console.error(datetime, "/games", JSON.stringify(error));
                     res.write(JSON.stringify(error));
@@ -75,18 +69,14 @@ module.exports = function () {
 
     function getGameInfo(res, mysql, context, complete, game_ID, console_ID, datetime) {
         var inserts = [game_ID, console_ID];
-        console.log(datetime, "/games", "SELECT console_name, Games.game_ID, photo,"
+        var sql = "SELECT console_name, Games.game_ID, photo,"
             + " game_name, description, release_date, AVG(rating) AS rating FROM Games"
             + " JOIN Consoles_Games ON Games.game_ID = Consoles_Games.game_ID"
             + " JOIN Consoles ON Consoles_Games.console_ID = Consoles.console_ID"
             + " LEFT JOIN Reviews ON Consoles.console_ID = Reviews.console_ID AND Games.game_ID = Reviews.game_ID"
-            + " WHERE Games.game_ID = ? AND Consoles.console_id = ?", inserts);
-        mysql.pool.query("SELECT console_name, Games.game_ID, photo,"
-            + " game_name, description, release_date, AVG(rating) AS rating FROM Games"
-            + " JOIN Consoles_Games ON Games.game_ID = Consoles_Games.game_ID"
-            + " JOIN Consoles ON Consoles_Games.console_ID = Consoles.console_ID"
-            + " LEFT JOIN Reviews ON Consoles.console_ID = Reviews.console_ID AND Games.game_ID = Reviews.game_ID"
-            + " WHERE Games.game_ID = ? AND Consoles.console_id = ?", inserts, function (error, results) {
+            + " WHERE Games.game_ID = ? AND Consoles.console_id = ?";
+        console.log(datetime, "/games", sql, inserts);
+        mysql.pool.query(sql, inserts, function (error, results) {
                 if (error) {
                     console.error(datetime, "/games", JSON.stringify(error));
                     res.write(JSON.stringify(error));
@@ -143,10 +133,9 @@ module.exports = function () {
         var mysql = req.app.get("mysql");
         var inserts = [req.query.console_ID, req.query.game_ID];
         var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
-        console.log(datetime, "/games", "DELETE FROM Consoles_Games WHERE console_ID = ? AND game_ID = ?",
-            inserts);
-        mysql.pool.query("DELETE FROM Consoles_Games WHERE console_ID = ? AND game_ID = ?",
-            inserts, function (error) {
+        var sql = "DELETE FROM Consoles_Games WHERE console_ID = ? AND game_ID = ?";
+        console.log(datetime, "/games", sql, inserts);
+        mysql.pool.query(sql, inserts, function (error) {
                 if (error) {
                     console.error(datetime, "/games", JSON.stringify(error));
                     res.statusMessage = JSON.stringify(error);
