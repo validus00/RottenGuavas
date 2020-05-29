@@ -24,10 +24,10 @@ var handlebars = require("express-handlebars").create({
             return number.toFixed(1);
         },
         freshOrNot: function (number) {         // function to evaluate fresh or not, return field for page
-            if (number >= 5) {
-                return "<img src='https://image.flaticon.com/icons/svg/2045/2045020.svg' width=25>Fresh!";
+            if (number >= 6) {
+                return "<img src='https://image.flaticon.com/icons/svg/2045/2045020.svg' width=25> Fresh!";
             } else {
-                return "Not!";
+                return "<img src='https://webstockreview.net/images/tomatoes-clipart-svg-11.png' width=25> Not!";
             }
         },
         formatDate: function (date) {           // function to splice out time from date
@@ -38,6 +38,15 @@ var handlebars = require("express-handlebars").create({
         processOption: function (pref_console_ID, console_ID) { // for drop-down box options
             if (pref_console_ID && console_ID && pref_console_ID == console_ID) {
                 return " selected";
+            }
+        },
+        ratingColor: function (number) {
+            if (number >= 7.5) {
+                return "bg-success";
+            } else if (number >= 5) {
+                return "bg-warning";
+            } else {
+                return "bg-danger";
             }
         }
     }
