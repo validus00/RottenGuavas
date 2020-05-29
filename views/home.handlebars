@@ -1,121 +1,125 @@
-<div class="container">
-    <div class="row">
-        <div class="col-3">
+<div class="p-3 mb-2 bg-dark text-white">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-3">
 
-            <!-- Search bar -->
-            <div class="card">
-                <div class="container">
-                    <form class="form-inline my-2 my-lg-0" action="/" method="POST">
-                        <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search Game Name" aria-label="Search">
-                        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><i class="fas fa-search" size=2></i></button>
-                    </form>
+                <!-- Search bar -->
+                <div class="card p-3 mb-2 bg-dark text-white">
+                    <div class="container">
+                        <form class="form-inline" action="/" method="POST">
+                            <input class="form-control-sm mr-3 w-85" type="search" placeholder="Search Game Name" aria-label="Search">
+                            <button class="btn text-success" type="submit">
+                                <i class="fas fa-search" aria-hidden="true"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Consoles checkboxes form-->
+                <div class="card p-3 mb-2 bg-dark text-white">
+                    <div class="card-header">
+                        Filter by Console
+                    </div>
+                    <div class="container">
+                        <form id="consoles" action="/" method="POST">
+                            {{#each consoles}}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="{{console_name}}" name="console_selection" {{checked}}>
+                                <label class="form-check-label" for="{{console_name}}">
+                                    {{console_name}}
+                                </label>
+                            </div>
+                            {{/each}}
+                            <div class="form-group">
+                                <input class="form-control-sm mr-3 w-100" type="text" placeholder="Add New Console" name="new_console">
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-success">Submit</button>
+                            <button onclick="clearForm('#consoles')" type="button" class="btn btn-sm btn-success">Clear</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Genres checkboxes form-->
+                <div class="card p-3 mb-2 bg-dark text-white">
+                    <div class="card-header">
+                        Filter by Genre
+                    </div>
+                    <div class="container">
+                        <form id="genres" action="/" method="POST">
+                            {{#each genres}}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="{{genre_ID}}" name="genre_selection" {{checked}}>
+                                <label class="form-check-label" for="{{genre_name}}">
+                                    {{genre_name}}
+                                </label>
+                            </div>
+                            {{/each}}
+                            <div class="form-group">
+                                <input class="form-control-sm mr-3 w-100" type="text" placeholder="Add New Genre" name="new_genre">
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-success">Submit</button>
+                            <button onclick="clearForm('#genres')" type="button" class="btn btn-sm btn-success">Clear</button>
+                        </form>
+                    </div>
                 </div>
             </div>
 
-            <!-- Consoles checkboxes form-->
-            <div class="card">
-                <div class="card-header">
-                    Consoles
+            <!-- Games Section -->
+            <div class="col-9">
+                <div class="jumbotron p-3 mb-2 bg-dark text-white">
+                    <h1 class="display-4">GAMES</h1>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                            onchange="if (this.checked) document.location.href = '/'; else document.location.href = '/?showAll=True';"
+                            {{#if showTop}} checked {{/if}}>
+                        <label class="form-check-label">Show Top Games</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                            onchange="if (this.checked) document.location.href = '/?showAll=True'; else document.location.href = '/';"
+                            {{#if showAll}} checked {{/if}}>
+                        <label class="form-check-label">Show All Games</label>
+                    </div>
+                    <hr class="my-4">
+                    {{#if gamesList}}
+                    {{#each gamesList}}
+                    <p class="lead">{{console_name}}</p>
+                    {{#if games}}
+                    <table class="table table-borderless table-sm text-white">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width:50px;"></th>
+                                <th scope="col" style="width:250px;">Game Name</th>
+                                <th scope="col" style="width:220px;">Game Rating</th>
+                                <th scope="col" style="width:220px;">Fresh Or Not?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each games}}
+                            <tr>
+                                <th scope="row">{{inc @index}}</th>
+                                <td><a class="text-success" href="/games?console_ID={{console_ID}}&game_ID={{game_ID}}">{{game_name}}</a></td>
+                                {{#if rating includeZero=true}}
+                                <td>{{toFixed rating}}</td>
+                                <td>{{{freshOrNot rating}}}</td>
+                                {{else}}
+                                <td>No reviews yet</td>
+                                <td></td>
+                                {{/if}}
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                    {{else}}
+                    No games yet
+                    <p></p>
+                    {{/if}}
+                    {{/each}}
+                    {{else}}
+                    <p>No results</p>
+                    {{/if}}
+                    <a class="btn btn-success btn-md" href="/addGame" role="button">Add Game</a>
                 </div>
-                <div class="container">
-                    <form id="consoles" action="/" method="POST">
-                        {{#each consoles}}
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="{{console_name}}" name="console_selection" {{checked}}>
-                            <label class="form-check-label" for="{{console_name}}">
-                                {{console_name}}
-                            </label>
-                        </div>
-                        {{/each}}
-                        <div class="form-group">
-                            <input class="form-control" type="text" placeholder="Add New Console" name="new_console">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                        <button onclick="clearForm('#consoles')" type="button" class="btn btn-primary">Clear</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Genres checkboxes form-->
-            <div class="card">
-                <div class="card-header">
-                    Genres
-                </div>
-                <div class="container">
-                    <form id="genres" action="/" method="POST">
-                        {{#each genres}}
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="{{genre_ID}}" name="genre_selection" {{checked}}>
-                            <label class="form-check-label" for="{{genre_name}}">
-                                {{genre_name}}
-                            </label>
-                        </div>
-                        {{/each}}
-                        <div class="form-group">
-                            <input class="form-control" type="text" placeholder="Add New Genre" name="new_genre">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                        <button onclick="clearForm('#genres')" type="button" class="btn btn-primary">Clear</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Games Section -->
-        <div class="col-9">
-            <div class="jumbotron">
-                <h1 class="display-4">GAMES</h1>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox"
-                           onchange="if (this.checked) document.location.href = '/'; else document.location.href = '/?showAll=True';"
-                           {{#if showTop}} checked {{/if}}>
-                    <label class="form-check-label">Show Top Games</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox"
-                           onchange="if (this.checked) document.location.href = '/?showAll=True'; else document.location.href = '/';"
-                           {{#if showAll}} checked {{/if}}>
-                    <label class="form-check-label">Show All Games</label>
-                </div>
-                <hr class="my-4">
-                {{#if gamesList}}
-                {{#each gamesList}}
-                <p class="lead">{{console_name}}</p>
-                {{#if games}}
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th scope="col" style="width:50px;"></th>
-                            <th scope="col" style="width:250px;">Game Name</th>
-                            <th scope="col" style="width:220px;">Game Rating</th>
-                            <th scope="col" style="width:220px;">Fresh Or Not?</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#each games}}
-                        <tr>
-                            <th scope="row">{{inc @index}}</th>
-                            <td><a href="/games?console_ID={{console_ID}}&game_ID={{game_ID}}">{{game_name}}</a></td>
-                            {{#if rating includeZero=true}}
-                            <td>{{toFixed rating}}</td>
-                            <td>{{{freshOrNot rating}}}</td>
-                            {{else}}
-                            <td>No reviews yet</td>
-                            <td></td>
-                            {{/if}}
-                        </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
-                {{else}}
-                No games yet
-                <p></p>
-                {{/if}}
-                {{/each}}
-                {{else}}
-                <p>No results</p>
-                {{/if}}
-                <a class="btn btn-primary btn-lg" href="/addGame" role="button">Add Game</a>
             </div>
         </div>
     </div>
