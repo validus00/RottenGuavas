@@ -17,7 +17,7 @@ module.exports = function () {
                 consolesList = "";
                 for (var i = 0; i < results.length; i++) {
                     if (results[i].console_ID != console_ID) {
-                        consolesList = consolesList + "<a href='/games?console_ID=" + results[i].console_ID;
+                        consolesList = consolesList + "<a class='text-success' href='/games?console_ID=" + results[i].console_ID;
                         consolesList = consolesList + "&game_ID=" + game_ID + "'>" + results[i].console_name + "</a>";
                         if (i + 1 < results.length) {
                             consolesList += ", ";
