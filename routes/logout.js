@@ -7,7 +7,7 @@ module.exports = function () {
         console.log(datetime, "/logout");
         req.session.loggedin = false;
         req.session.user_ID = null;
-        res.redirect("/");
+        res.redirect("/?showAll=True");
     });
 
     return router;

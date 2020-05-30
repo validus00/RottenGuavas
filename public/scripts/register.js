@@ -12,7 +12,7 @@ $(document).ready(function () {
                     data: $("#register").serialize(),
                     success: function (data, textStatus) {
                         alert(textStatus);
-                        window.location.replace("/");
+                        window.location.replace("/?showAll=True");
                     },
                     error: function (results) {
                         alert(results.statusText);
