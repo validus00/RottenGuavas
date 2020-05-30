@@ -1,46 +1,72 @@
-<div class="col-9">
-    <div class="jumbotron">
-        <h1 class="display-4">ADD REVIEW</h1>
-        <hr class="my-4">
+{{!-- Add Review Container --}}
+<div class="container pt-5">
+    <div class="row">
+        <div class="col-sm-1">
+        </div>
+        <div class="col-sm-10">
+            <div class="card bg-dark text-white border-white">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        Add Review
+                    </h4>
+                </div>
 
-        <!-- Add Game Form -->
-        <form id="addReview" action="/addReview" method="POST">
-            <input type="hidden" name="game_ID" placeholder="Game ID" value="{{game_ID}}">
-            <div class="form-group">
-                <label for="game">Game</label>
-                <input type="text" name="game" placeholder="Game" value="{{game_name}}" readonly>
+                <!-- Add Game Form -->
+                <form id="addReview" action="/addReview" method="POST" class="card-body">
+                    <input type="hidden" name="game_ID" placeholder="Game ID" value="{{game_ID}}">
+                    <div class="form-group">
+                        <label for="game">
+                            Game
+                        </label>
+                        <input type="text" name="game" placeholder="Game" value="{{game_name}}" class="form-control" readonly>
+                    </div>
+                    <input type="hidden" name="console_ID" placeholder="Console ID" value="{{console_ID}}">
+                    <div class="form-group">
+                        <label for="console">
+                            Console
+                        </label>
+                        <input type="text" name="console" placeholder="Console" value="{{console_name}}" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="rating">
+                            Rating
+                        </label>
+                        <select id="rating" name="rating" class="form-control">
+                            <option value="10">10</option>
+                            <option value="9">9</option>
+                            <option value="8">8</option>
+                            <option value="7">7</option>
+                            <option value="6">6</option>
+                            <option value="5">5</option>
+                            <option value="4">4</option>
+                            <option value="3">3</option>
+                            <option value="2">2</option>
+                            <option value="1">1</option>
+                            <option value="0">0</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="title">
+                            Title
+                        </label>
+                        <input class="form-control" type="text" name="title">
+                    </div>
+                    <div class="form-group">
+                        <label for="content">
+                            Review
+                        </label>
+                        <textarea class="form-control" rows="5" name="content"></textarea>
+                    </div>
+                    <div class="form-group text-center pt-3">
+                        <button type="submit" class="btn btn-success">
+                            Submit
+                        </button>
+                        <button onclick="location.href='/games?console_ID={{console_ID}}&game_ID={{game_ID}}'" type="button" class="btn btn-success">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
             </div>
-            <input type="hidden" name="console_ID" placeholder="Console ID" value="{{console_ID}}">
-            <div class="form-group">
-                <label for="console">Console</label>
-                <input type="text" name="console" placeholder="Console" value="{{console_name}}" readonly>
-            </div>
-            <div class="form-group">
-                <label for="rating">Your rating</label>
-                <select id="rating" name="rating">
-                    <option value="10">10</option>
-                    <option value="9">9</option>
-                    <option value="8">8</option>
-                    <option value="7">7</option>
-                    <option value="6">6</option>
-                    <option value="5">5</option>
-                    <option value="4">4</option>
-                    <option value="3">3</option>
-                    <option value="2">2</option>
-                    <option value="1">1</option>
-                    <option value="0">0</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="title">Title of your review</label>
-                <input class="form-control" type="text" name="title">
-            </div>
-            <div class="form-group">
-                <label for="content">Your review</label>
-                <textarea class="form-control" rows="5" name="content"></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-            <button onclick="location.href='/games?console_ID={{console_ID}}&game_ID={{game_ID}}'" type="button" class="btn btn-primary">Cancel</button>
-        </form>
+        </div>
     </div>
 </div>

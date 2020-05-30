@@ -1,75 +1,137 @@
-<div class="container-fluid">
-    <h1>
-        Profile
-    </h1>
-    {{#if photo}}
-    <img src="{{photo}}" class="profile_photo" />
-    {{else}}
-    Pic not available
-    {{/if}}
-    <form id="profile" action="/profile" method="POST">
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" name="username" placeholder="username" value="{{user_name}}" required>
+{{!-- Profile Container --}}
+<div class="container pt-5">
+    <div class="row">
+        <div class="col-sm-1">
         </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" name="password" placeholder="password" required>
-        </div>
-        <div class="form-group">
-            <label for="email">E-mail</label>
-            <input type="email" name="email" placeholder="email" value="{{email}}" required>
-        </div>
-        <div class="form-group">
-            <label for="console">Preferred Console</label>
-            <select id="console" name="console">
-                {{#each options}}
-                <option value="{{console_ID}}" {{processOption pref_console_ID console_ID}}>{{console_name}}</option>
-                {{/each}}
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="photo">URL to your photo</label>
-            <input type="text" name="photo" placeholder="photo" value="{{photo}}">
-        </div>
-        <button type="submit" class="btn btn-primary">Update</button>
-    </form>
+        <div class="col-sm-10">
+            <div class="card bg-dark text-white border-secondary">
+                <div class="card-header text-center">
+                    <h4 class="card-title">
+                        Profile
+                    </h4>
+                    <h6 class="card-subtitl mb-2 text-warning">
+                       View or Edit Profile
+                    </h6>
+                </div>
 
-    <hr class="my-4">
-    <h2>Your Reviews</h2>
-    {{#if reviews}}
-    {{#each reviews}}
-    <div>
-        <table class="table table-sm medium_cell" style="margin-top:50px;">
-            <thead>
-                <tr>
-                    <th scope="col">Game</th>
-                    <th scope="col">Console</th>
-                    <th scope="col">Your Rating</th>
-                    <th scope="col">Review Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{{game_name}}</td>
-                    <td>{{console_name}}</td>
-                    <td>{{rating}}</td>
-                    <td>{{formatDate review_date}}</td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="form-group">
-            <label for="title"><strong>Review Title</strong></label>
-            <input type="text" name="title" placeholder="title" value="{{title}}" readonly />
+                {{!-- Profile Info/Edit Form --}}
+                <form id="profile" action="/profile" method="POST" class="card-body">
+                    <div class="form-group text-center">  
+                        {{#if photo}}
+                            <img src="{{photo}}" class="profile_photo card-img-top" />
+                        {{else}}
+                            Pic not available
+                        {{/if}}
+                    </div>  
+                    <div class="form-group">
+                        <label for="username">
+                            Username
+                        </label>
+                        <input type="text" name="username" placeholder="Username" value="{{user_name}}" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">
+                            Password
+                        </label>
+                        <input type="password" name="password" placeholder="Password" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" name="email" placeholder="E-mail" value="{{email}}" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="console">Preferred Console</label>
+                        <select id="console" name="console" class="form-control">
+                            {{#each options}}
+                                <option value="{{console_ID}}" {{processOption pref_console_ID console_ID}}>
+                                    {{console_name}}
+                                </option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="photo">URL to your photo</label>
+                        <input type="text" name="photo" placeholder="https://..." value="{{photo}}" class="form-control">
+                    </div>
+                    <div class="form-group text-center pt-3">
+                        <button type="submit" class="btn btn-success">
+                            Update
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="summary"><strong>Summary</strong></label>
-            <textarea class="form-control text_box" name="summary" readonly>{{content}}</textarea>
+        <div class="col-sm-1">
         </div>
-        <button onclick="deleteReview({{review_ID}})" type="button" class="btn btn-primary">Delete</button>
     </div>
-    {{/each}}
-    {{else}}
-    No reviews yet
-    {{/if}}
 </div>
+
+{{!-- Reviews --}}
+<div class="container p-5">
+    <div class="card">
+        <div class="bg-dark">
+            <div class="jumbotron p-3 mb-2 bg-dark text-white">
+
+                {{!-- Reviews header and Add Review Button --}}
+                <div class="row">
+                    <div class="col-6">
+                        <h1 class="text-left display-4">
+                            Your Reviews
+                        </h1>
+                    </div>
+                    <div class="col-6 text-right">
+                    </div>
+                </div>
+                <p></p>
+
+                {{!-- Each review --}}
+                {{#if reviews}}
+                {{#each reviews}} 
+                <div class="card">
+                    <div class="bg-dark text-white">
+                        <div class="card-title">
+                            <div class="container">
+                                <div class="row text-center">
+                                    <div class="col-1 {{ratingColor rating}} text-center">
+                                        {{toFixed rating}} 
+                                    </div>
+                                    <div class="col-2">
+                                        {{game_name}}
+                                    </div>
+                                    <div class="col-2">
+                                        {{console_name}}
+                                    </div>
+                                    <div class="col-4">
+                                        {{formatDate review_date}} 
+                                    </div>
+                                    <div class="col-3 text-right">
+                                        <button onclick="deleteReview({{review_ID}})" type="button" class="btn btn-success">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">
+                                <strong>
+                                    {{title}} 
+                                </strong>
+                            </div>
+                            <div class="card-text">
+                                {{content}} 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p></p>
+                {{/each}}
+                {{else}}
+                No reviews yet
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>    
+
+   
