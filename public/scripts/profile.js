@@ -29,6 +29,6 @@ function deleteReview(review_ID) {
             error: function (results) {
                 alert(results.statusText);
             }
-        })
+        });
     }
 }
