@@ -4,6 +4,9 @@
   - April Castaneda
   - Kevin Wu
 
+**Our Website on Heroku**
+  - http://calm-caverns-42889.herokuapp.com/
+
 **1. Commands to run to prepare for your server**
   - Start bash
 ```
@@ -41,5 +44,4 @@ ps aux | grep {your user name}
 kill -9 {processId}
 ```
 **5. To open the website**
-  - Log into OSU VPN
-  - Open a web browser and enter flipX.engr.oregonstate.edu:{your port number}, where X in flipX is the same flip server that you are running your instance on. flip3 is one for example. {your port number} is the {your port number} that you set in config.py. For example, to reach one instance of the server, you could enter http://flip3.engr.oregonstate.edu:12121/ in your web browser address.
+  - Open a web browser and enter "localhost:{your port number}".
