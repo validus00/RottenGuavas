@@ -15,6 +15,9 @@
         "express-handlebars": "^2.0.1",
         "express-session": "^1.11.3",
         "mysql": "^2.18.1",
-        "node": "^11.5.0"
+        "node": "^11.15.0"
+    },
+    "engines": {
+	"node": "^11.15.0"
     }
 }
