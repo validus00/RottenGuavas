@@ -1,7 +1,7 @@
 # RottenGuava
 
 **CS 340 Spring 2020 - Team 11**
-  - April Castaneda
+  - April Castañeda
   - Kevin Wu
 
 **1. Commands to run to prepare for your server**
