@@ -16,7 +16,6 @@ bash
 ```
 npm install
 npm install forever
-npm install express-session
 ```
   - Update your credentials in dbcon.js. Enter user, password, database information.
   
