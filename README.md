@@ -1,7 +1,7 @@
 # RottenGuava
 
 **CS 340 Spring 2020 - Team 11**
-  - April Castaneda
+  - April Castañeda
   - Kevin Wu
 
 **Our Website on Heroku**
