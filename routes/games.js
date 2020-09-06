@@ -134,8 +134,8 @@ module.exports = function () {
     });
 
     router.delete("/deleteGame", function (req, res) {
-        if (!req.query.game_ID || !req.query.console_ID) {
-            res.redirect("/");
+        if (!req.query.console_ID || !req.query.game_ID) {
+            res.status(400).end();
         } else {
             var mysql = req.app.get("mysql");
             var inserts = [req.query.console_ID, req.query.game_ID];
