@@ -57,13 +57,16 @@ module.exports = function () {
     }
 
     router.delete("/deleteReview", function (req, res) {
-        if (req.session.loggedin) {
-            var mysql = req.app.get("mysql");
-            var inserts = [req.query.review_ID, req.session.user_ID];
-            var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
-            var sql = "DELETE FROM Reviews WHERE review_ID = ? AND user_ID = ?";
-            console.log(datetime, "/profile", sql, inserts);
-            mysql.pool.query(sql, inserts, function (error) {
+        if (!req.query.review_ID) {
+            res.status(400).end();
+        } else {
+            if (req.session.loggedin) {
+                var mysql = req.app.get("mysql");
+                var inserts = [req.query.review_ID, req.session.user_ID];
+                var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+                var sql = "DELETE FROM Reviews WHERE review_ID = ? AND user_ID = ?";
+                console.log(datetime, "/profile", sql, inserts);
+                mysql.pool.query(sql, inserts, function (error) {
                     if (error) {
                         console.error(datetime, "/profile", JSON.stringify(error));
                         res.statusMessage = JSON.stringify(error);
@@ -72,9 +75,10 @@ module.exports = function () {
                         res.status(200).end();
                     }
                 });
-        } else {
-            console.error(datetime, "/profile/deleteReview unauthorized");
-            res.status(401).end();
+            } else {
+                console.error(datetime, "/profile/deleteReview unauthorized");
+                res.status(401).end();
+            }
         }
     });
 

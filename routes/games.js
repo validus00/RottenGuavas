@@ -108,34 +108,41 @@ module.exports = function () {
     });
 
     router.get("/", function (req, res) {
-        var totalCallBack = 4;
-        var callbackCount = 0;
-        var context = {};
-        context.jsscripts = ["games.js"];
-        if (req.session.loggedin) {
-            context.loggedin = true;
-        }
-        var mysql = req.app.get("mysql");
-        var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
-        getGameInfo(res, mysql, context, complete, req.query.game_ID, req.query.console_ID, datetime);
-        getGameGenres(res, mysql, context, complete, req.query.game_ID, datetime);
-        getGameConsoles(res, mysql, context, complete, req.query.game_ID, req.query.console_ID, datetime);
-        getGameReviews(res, mysql, context, complete, req.query.game_ID, req.query.console_ID, datetime);
-        function complete() {
-            callbackCount++;
-            if (callbackCount >= totalCallBack) {
-                res.render("games", context);
+        if (!req.query.game_ID || !req.query.console_ID) {
+            res.redirect("/");
+        } else {
+            var totalCallBack = 4;
+            var callbackCount = 0;
+            var context = {};
+            context.jsscripts = ["games.js"];
+            if (req.session.loggedin) {
+                context.loggedin = true;
+            }
+            var mysql = req.app.get("mysql");
+            var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+            getGameInfo(res, mysql, context, complete, req.query.game_ID, req.query.console_ID, datetime);
+            getGameGenres(res, mysql, context, complete, req.query.game_ID, datetime);
+            getGameConsoles(res, mysql, context, complete, req.query.game_ID, req.query.console_ID, datetime);
+            getGameReviews(res, mysql, context, complete, req.query.game_ID, req.query.console_ID, datetime);
+            function complete() {
+                callbackCount++;
+                if (callbackCount >= totalCallBack) {
+                    res.render("games", context);
+                }
             }
         }
     });
 
     router.delete("/deleteGame", function (req, res) {
-        var mysql = req.app.get("mysql");
-        var inserts = [req.query.console_ID, req.query.game_ID];
-        var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
-        var sql = "DELETE FROM Consoles_Games WHERE console_ID = ? AND game_ID = ?";
-        console.log(datetime, "/games", sql, inserts);
-        mysql.pool.query(sql, inserts, function (error) {
+        if (!req.query.game_ID || !req.query.console_ID) {
+            res.redirect("/");
+        } else {
+            var mysql = req.app.get("mysql");
+            var inserts = [req.query.console_ID, req.query.game_ID];
+            var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+            var sql = "DELETE FROM Consoles_Games WHERE console_ID = ? AND game_ID = ?";
+            console.log(datetime, "/games", sql, inserts);
+            mysql.pool.query(sql, inserts, function (error) {
                 if (error) {
                     console.error(datetime, "/games", JSON.stringify(error));
                     res.statusMessage = JSON.stringify(error);
@@ -144,6 +151,7 @@ module.exports = function () {
                     res.status(200).end();
                 }
             });
+        }
     });
 
     return router;

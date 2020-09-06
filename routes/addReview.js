@@ -3,19 +3,21 @@ module.exports = function () {
     var router = express.Router();
 
     router.get("/", function (req, res) {
-        if (req.session.loggedin) {
-            var context = {};
-            context.jsscripts = ["addReview.js"];
-            if (req.session.loggedin) {
-                context.loggedin = true;
-            }
-            context.console_ID = req.query.console_ID;
-            context.console_name = req.query.console_name;
-            context.game_ID = req.query.game_ID;
-            context.game_name = req.query.game_name;
-            res.render("addReview", context);
+        if (!req.query.game_ID || !req.query.console_ID || !req.query.game_name || !req.query.console_name) {
+            res.redirect("/");
         } else {
-            res.redirect("/login");
+            if (req.session.loggedin) {
+                var context = {};
+                context.jsscripts = ["addReview.js"];
+                context.loggedin = true;
+                context.console_ID = req.query.console_ID;
+                context.console_name = req.query.console_name;
+                context.game_ID = req.query.game_ID;
+                context.game_name = req.query.game_name;
+                res.render("addReview", context);
+            } else {
+                res.redirect("/login");
+            }
         }
     });
 
