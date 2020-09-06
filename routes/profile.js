@@ -117,26 +117,29 @@ module.exports = function () {
     });
 
     router.post("/", function (req, res) {
-        if (req.session.loggedin) {
-            var mysql = req.app.get("mysql");
-            var inserts = [req.body.username, req.session.user_ID];
-            var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
-            var sql = "SELECT * FROM Users WHERE user_name = ? AND user_ID != ?";
-            console.log(datetime, "/profile", sql, inserts);
-            mysql.pool.query(sql, inserts, function (error, results) {
-                if (error) {
-                    console.error(datetime, "/profile", JSON.stringify(error));
-                    res.statusMessage = JSON.stringify(error);
-                    res.status(400).end();
-                } else {
-                    if (results.length == 0) {
-                        if (req.body.console == "") {
-                            req.body.console = null;
-                        }
-                        inserts = [req.body.username, req.body.password, req.body.email, req.body.console, req.body.photo, req.session.user_ID];
-                        sql = "UPDATE Users SET user_name = ?, password = ?, email = ?, pref_console_ID = ?, photo = ? WHERE user_ID = ?";
-                        console.log(datetime, "/profile", sql, inserts);
-                        mysql.pool.query(sql, inserts, function (error) {
+        if (!req.body.username || !req.body.password || !req.body.email) {
+            res.status(400).end();
+        } else {
+            if (req.session.loggedin) {
+                var mysql = req.app.get("mysql");
+                var inserts = [req.body.username, req.session.user_ID];
+                var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+                var sql = "SELECT * FROM Users WHERE user_name = ? AND user_ID != ?";
+                console.log(datetime, "/profile", sql, inserts);
+                mysql.pool.query(sql, inserts, function (error, results) {
+                    if (error) {
+                        console.error(datetime, "/profile", JSON.stringify(error));
+                        res.statusMessage = JSON.stringify(error);
+                        res.status(400).end();
+                    } else {
+                        if (results.length == 0) {
+                            if (req.body.console == "") {
+                                req.body.console = null;
+                            }
+                            inserts = [req.body.username, req.body.password, req.body.email, req.body.console, req.body.photo, req.session.user_ID];
+                            sql = "UPDATE Users SET user_name = ?, password = ?, email = ?, pref_console_ID = ?, photo = ? WHERE user_ID = ?";
+                            console.log(datetime, "/profile", sql, inserts);
+                            mysql.pool.query(sql, inserts, function (error) {
                                 if (error) {
                                     console.error(datetime, "/profile", JSON.stringify(error));
                                     res.statusMessage = JSON.stringify(error);
@@ -145,15 +148,16 @@ module.exports = function () {
                                     res.status(200).end();
                                 }
                             });
-                    } else {
-                        res.statusMessage = "username already in use";
-                        res.status(400).end();
+                        } else {
+                            res.statusMessage = "username already in use";
+                            res.status(400).end();
+                        }
                     }
-                }
-            });
-        } else {
-            console.error(datetime, "/profile update unauthorized");
-            res.status(401).end();
+                });
+            } else {
+                console.error(datetime, "/profile update unauthorized");
+                res.status(401).end();
+            }
         }
     });
 

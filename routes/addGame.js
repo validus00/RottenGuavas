@@ -225,28 +225,31 @@ module.exports = function () {
 
     // Post route to add a game or add new consoles_games and/or genres_games relationships
     router.post("/", function (req, res) {
-        var totalFirstCB = 1;
-        var firstCBCount = 0;
-        var secondCBCount = 0;
-        var thirdCBCount = 0;
+        if (!req.body.game_name || !req.body.release_date) {
+            res.status(400).end();
+        } else {
+            var totalFirstCB = 1;
+            var firstCBCount = 0;
+            var secondCBCount = 0;
+            var thirdCBCount = 0;
 
-        var totalConsoles = 0;
-        var totalGenres = 0;
+            var totalConsoles = 0;
+            var totalGenres = 0;
 
-        var context = {};
-        var consolesList = [];
-        var genresList = [];
+            var context = {};
+            var consolesList = [];
+            var genresList = [];
 
-        res.statusMessage = "";
+            res.statusMessage = "";
 
-        // // If no console(s) chosen, send error
-        // if (!req.body.console_selection) {
-        //     res.statusMessage += "Console choice(s) required.";
-        //     res.status(400).end();
-        // }
+            // // If no console(s) chosen, send error
+            // if (!req.body.console_selection) {
+            //     res.statusMessage += "Console choice(s) required.";
+            //     res.status(400).end();
+            // }
 
-        // Consoles are chosen so we can continue adding a game
-        // else {
+            // Consoles are chosen so we can continue adding a game
+            // else {
             var mysql = req.app.get("mysql");
             var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
 
@@ -262,21 +265,21 @@ module.exports = function () {
                     console.error(datetime, "/addGame", JSON.stringify(error));
                     res.statusMessage = JSON.stringify(error);
                     res.status(400).end();
-                } 
+                }
                 else {
 
                     // Check how many consoles are chosen
-                    if(req.body.console_selection){
+                    if (req.body.console_selection) {
                         if (Array.isArray(req.body.console_selection)) {
                             consolesList = req.body.console_selection;
                             totalConsoles = consolesList.length;
-                        } 
+                        }
                         else {
                             consolesList.push(req.body.console_selection);
                             totalConsoles = 1;
                         }
                     }
-                    else{
+                    else {
                         totalConsoles = 0;
                     }
                     context.consolesList = consolesList;
@@ -286,12 +289,12 @@ module.exports = function () {
                         if (Array.isArray(req.body.genre_selection)) { // If multiple genres chosen
                             genresList = req.body.genre_selection;
                             totalGenres = genresList.length;
-                        } 
+                        }
                         else {                                       // If only one genre chosen
                             genresList.push(req.body.genre_selection);
                             totalGenres = 1;
                         }
-                    } 
+                    }
                     else {                                            // If no genres are chosen
                         totalGenres = 0;
                     }
@@ -306,17 +309,17 @@ module.exports = function () {
                         console.log(datetime, "/addGame", sql, inserts);
                         mysql.pool.query(sql, inserts, function (error, results, fields) {
 
-                                if (error) {
-                                    console.error(datetime, "/addGame", JSON.stringify(error));
-                                    res.statusMessage = JSON.stringify(error);
-                                    res.status(400).end();
-                                } 
-                                else {
-                                    res.statusMessage += "Game '" + req.body.game_name + "' added.\\n";
-                                    // Use gameID to start process of adding Consoles_Games and Genres_Games
-                                    getGameID(req, res, mysql, context, req.body.game_name, complete);
-                                }
+                            if (error) {
+                                console.error(datetime, "/addGame", JSON.stringify(error));
+                                res.statusMessage = JSON.stringify(error);
+                                res.status(400).end();
                             }
+                            else {
+                                res.statusMessage += "Game '" + req.body.game_name + "' added.\\n";
+                                // Use gameID to start process of adding Consoles_Games and Genres_Games
+                                getGameID(req, res, mysql, context, req.body.game_name, complete);
+                            }
+                        }
                         );
                     }
 
@@ -327,29 +330,30 @@ module.exports = function () {
                     }
                 }
             });
-        // }
+            // }
 
-        // Async used after getGameID() is finished
-        function complete(res, context, game_name) {
-            firstCBCount++;
-            if (firstCBCount >= totalFirstCB) {
-                addConsolesGames(res, mysql, context, totalConsoles, totalGenres, game_name, addCGComplete, datetime);
+            // Async used after getGameID() is finished
+            function complete(res, context, game_name) {
+                firstCBCount++;
+                if (firstCBCount >= totalFirstCB) {
+                    addConsolesGames(res, mysql, context, totalConsoles, totalGenres, game_name, addCGComplete, datetime);
+                }
             }
-        }
 
-        // Async used after addConsolesGames() is finished
-        function addCGComplete(res, game_name) {
-            secondCBCount++;
-            if (secondCBCount >= totalConsoles) {
-                addGenresGames(res, mysql, context, totalGenres, game_name, addGGComplete, datetime);
+            // Async used after addConsolesGames() is finished
+            function addCGComplete(res, game_name) {
+                secondCBCount++;
+                if (secondCBCount >= totalConsoles) {
+                    addGenresGames(res, mysql, context, totalGenres, game_name, addGGComplete, datetime);
+                }
             }
-        }
 
-        // Async used after addGenresGames() is finished
-        function addGGComplete(res, game_name) {
-            thirdCBCount++;
-            if (thirdCBCount >= totalGenres) {
-                res.status(200).end();
+            // Async used after addGenresGames() is finished
+            function addGGComplete(res, game_name) {
+                thirdCBCount++;
+                if (thirdCBCount >= totalGenres) {
+                    res.status(200).end();
+                }
             }
         }
     });

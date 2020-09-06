@@ -43,25 +43,28 @@ module.exports = function () {
     });
 
     router.post("/", function (req, res) {
-        var mysql = req.app.get("mysql");
-        var inserts = [req.body.username];
-        var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
-        var sql = "SELECT * FROM Users WHERE user_name = ?";
-        console.log(datetime, "/register", sql, inserts);
-        mysql.pool.query(sql, inserts, function (error, results) {
-            if (error) {
-                console.error(datetime, "/register", JSON.stringify(error));
-                res.statusMessage = JSON.stringify(error);
-                res.status(400).end();
-            } else {
-                if (results.length == 0) {
-                    if (req.body.console == "") {
-                        req.body.console = null;
-                    }
-                    inserts = [req.body.username, req.body.password, req.body.email, req.body.console, req.body.photo];
-                    sql = "INSERT INTO Users (user_name, password, email, pref_console_ID, photo) VALUES (?, ?, ?, ?, ?)";
-                    console.log(datetime, "/register", sql, inserts);
-                    mysql.pool.query(sql, inserts, function (error) {
+        if (!req.body.username || !req.body.password || !req.body.email) {
+            res.status(400).end();
+        } else {
+            var mysql = req.app.get("mysql");
+            var inserts = [req.body.username];
+            var datetime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+            var sql = "SELECT * FROM Users WHERE user_name = ?";
+            console.log(datetime, "/register", sql, inserts);
+            mysql.pool.query(sql, inserts, function (error, results) {
+                if (error) {
+                    console.error(datetime, "/register", JSON.stringify(error));
+                    res.statusMessage = JSON.stringify(error);
+                    res.status(400).end();
+                } else {
+                    if (results.length == 0) {
+                        if (!req.body.console || req.body.console == "") {
+                            req.body.console = null;
+                        }
+                        inserts = [req.body.username, req.body.password, req.body.email, req.body.console, req.body.photo];
+                        sql = "INSERT INTO Users (user_name, password, email, pref_console_ID, photo) VALUES (?, ?, ?, ?, ?)";
+                        console.log(datetime, "/register", sql, inserts);
+                        mysql.pool.query(sql, inserts, function (error) {
                             if (error) {
                                 console.error(datetime, "/register", JSON.stringify(error));
                                 res.statusMessage = JSON.stringify(error);
@@ -70,12 +73,13 @@ module.exports = function () {
                                 res.status(200).end();
                             }
                         });
-                } else {
-                    res.statusMessage = "username already in use";
-                    res.status(400).end();
+                    } else {
+                        res.statusMessage = "username already in use";
+                        res.status(400).end();
+                    }
                 }
-            }
-        });
+            });
+        }
     });
 
     return router;
